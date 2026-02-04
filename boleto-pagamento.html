@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boleto - GYM FIT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .cabecalho-pagamento {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 10px 0;
+        }
+        
+        .voltar-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            margin-right: 20px;
+            transition: color 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .voltar-btn:hover {
+            color: #8B0000;
+        }
+        
+        .titulo-pagamento {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            flex: 1;
+        }
+        
+        .info-pagamento {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .alerta-boleto {
+            background: linear-gradient(135deg, #FFA500, #FF8C00);
+            color: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: left;
+        }
+        
+        .alerta-boleto i {
+            margin-right: 8px;
+        }
+        
+        .boleto-preview {
+            background: white;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .codigo-barras {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            width: 100%;
+        }
+        
+        .linha-barras {
+            height: 40px;
+            background: repeating-linear-gradient(
+                90deg,
+                #000,
+                #000 2px,
+                transparent 2px,
+                transparent 4px
+            );
+            margin-bottom: 10px;
+        }
+        
+        .numero-boleto {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #000;
+            text-align: center;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+        
+        .instrucoes-boleto {
+            color: #666;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+        
+        .detalhes-boleto {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .linha-detalhe {
+            display: flex;
+            justify-content: space-between;
+            margin: 12px 0;
+            font-size: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .linha-detalhe:last-child {
+            border-bottom: none;
+        }
+        
+        .label {
+            color: #ccc;
+        }
+        
+        .valor {
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        .valor-destaque {
+            color: #8B0000;
+            font-weight: 700;
+        }
+        
+        .acoes-boleto {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .btn-acao {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-imprimir {
+            background: #8B0000;
+            color: white;
+        }
+        
+        .btn-imprimir:hover {
+            background: #A52A2A;
+        }
+        
+        .btn-email {
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+        }
+        
+        .btn-email:hover {
+            background: #444;
+        }
+        
+        .info-entrega {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        
+        .info-entrega .label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .timer-container {
+            background: #8B0000;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .timer {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .spinner {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #8B0000;
+        }
+        
+        .total-pagamento {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .label-total {
+            font-size: 16px;
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+        
+        .valor-total {
+            font-size: 28px;
+            font-weight: 700;
+            color: #8B0000;
+        }
+        
+        .botoes-pagamento {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn-pagamento {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-cancelar {
+            background: #333;
+            color: white;
+        }
+        
+        .btn-cancelar:hover {
+            background: #444;
+        }
+        
+        .btn-confirmar {
+            background: linear-gradient(135deg, #8B0000, #A52A2A);
+            color: white;
+        }
+        
+        .btn-confirmar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 0, 0, 0.4);
+        }
+
+        /* Modal de confirmação */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 25px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .modal-icon {
+            font-size: 48px;
+            color: #32CD32;
+            margin-bottom: 15px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 375px) {
+            .acoes-boleto {
+                flex-direction: column;
+            }
+            
+            .boleto-preview {
+                padding: 15px;
+                min-height: 180px;
+            }
+            
+            .titulo-pagamento {
+                font-size: 20px;
+            }
+            
+            .timer {
+                font-size: 18px;
+            }
+        }
+
+        /* Animações */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes print {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        .print-animation {
+            animation: print 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cabecalho-pagamento">
+            <button class="voltar-btn" onclick="voltarParaOpcoes()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="titulo-pagamento">Boleto Bancário</h1>
+        </div>
+        
+        <div class="info-pagamento">
+            <div class="alerta-boleto">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>IMPORTANTE:</strong> O processamento do boleto pode levar até 3 dias úteis.
+            </div>
+            
+            <div class="timer-container">
+                <div>⏰ VENCIMENTO DO BOLETO</div>
+                <div class="timer" id="dataVencimento">Carregando...</div>
+                <div style="font-size: 12px;">Data limite para pagamento</div>
+            </div>
+            
+            <div class="boleto-preview print-animation">
+                <h3 style="color: #000; margin-bottom: 15px;">BOLETO BANCÁRIO</h3>
+                
+                <div class="codigo-barras">
+                    <div class="linha-barras"></div>
+                    <div class="numero-boleto" id="numeroBoleto">
+                        <!-- Número do boleto será gerado aqui -->
+                    </div>
+                </div>
+                
+                <div class="instrucoes-boleto">
+                    <strong>Instruções de Pagamento:</strong><br>
+                    1. Acesse seu internet banking<br>
+                    2. Selecione "Pagamento de Boleto"<br>
+                    3. Digite o código ou use o código de barras
+                </div>
+            </div>
+            
+            <div class="acoes-boleto">
+                <button class="btn-acao btn-imprimir" onclick="imprimirBoleto()">
+                    <i class="fas fa-print"></i> Imprimir Boleto
+                </button>
+                <button class="btn-acao btn-email" onclick="enviarPorEmail()">
+                    <i class="fas fa-envelope"></i> Enviar por E-mail
+                </button>
+            </div>
+            
+            <div class="detalhes-boleto">
+                <div class="linha-detalhe">
+                    <span class="label">Beneficiário:</span>
+                    <span class="valor">GYM FIT SUPPLEMENTS LTDA</span>
+                </div>
+                <div class="linha-detalhe">
+                    <span class="label">CNPJ:</span>
+                    <span class="valor">12.345.678/0001-90</span>
+                </div>
+                <div class="linha-detalhe">
+                    <span class="label">Valor do Boleto:</span>
+                    <span class="valor valor-destaque" id="valorBoleto">R$ 0,00</span>
+                </div>
+                <div class="linha-detalhe">
+                    <span class="label">Código do Boleto:</span>
+                    <span class="valor" id="codigoBoleto">84690000000-0 00000000000-0 00000000000-0 00000000000-0</span>
+                </div>
+                <div class="linha-detalhe">
+                    <span class="label">Vencimento:</span>
+                    <span class="valor" id="vencimentoDetalhe">DD/MM/AAAA</span>
+                </div>
+            </div>
+            
+            <div class="info-entrega">
+                <span class="label">📦 Entrega após confirmação do pagamento:</span>
+                <div style="color: #ccc; margin-top: 8px; font-size: 13px;">
+                    O prazo de entrega inicia após a confirmação do pagamento pelo banco, 
+                    que pode levar até 3 dias úteis.
+                </div>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <p>Gerando boleto...</p>
+                <p style="font-size: 12px; color: #888;">Aguarde um momento</p>
+            </div>
+        </div>
+        
+        <div class="total-pagamento">
+            <div class="label-total">Total a pagar</div>
+            <div class="valor-total" id="valorTotal">R$ 0,00</div>
+            <div style="font-size: 12px; color: #888; margin-top: 8px;">
+                Boleto bancário
+            </div>
+        </div>
+        
+        <div class="botoes-pagamento">
+            <button class="btn-pagamento btn-cancelar" onclick="cancelarPagamento()">
+                Cancelar
+            </button>
+            <button class="btn-pagamento btn-confirmar" onclick="gerarBoleto()">
+                Gerar Boleto
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de confirmação -->
+    <div class="modal" id="modalSucesso">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 style="margin-bottom: 15px; color: #32CD32;">Boleto Gerado!</h3>
+            <p style="color: #ccc; margin-bottom: 20px; line-height: 1.5;">
+                Seu boleto foi gerado com sucesso. 
+                <strong>Não feche esta página</strong> até imprimir ou salvar o boleto.
+            </p>
+            <button class="btn-pagamento btn-confirmar" onclick="fecharModal()" style="width: 100%;">
+                Continuar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let numeroBoletoGerado = '';
+        let dataVencimento = '';
+
+        // Função para gerar número de boleto aleatório
+        function gerarNumeroBoleto() {
+            // Formato: 84690.00000 00000.000000 00000.000000 0 00000000000000
+            let numero = '84690'; // Código do banco (exemplo)
+            
+            // Gerar partes aleatórias
+            for (let i = 0; i < 4; i++) {
+                let parte = '';
+                for (let j = 0; j < 5; j++) {
+                    parte += Math.floor(Math.random() * 10);
+                }
+                numero += parte;
+                if (i < 3) numero += ' ';
+            }
+            
+            // Adicionar dígito verificador (simulado)
+            numero += '0';
+            
+            return numero;
+        }
+
+        // Função para gerar código de boleto (linha digitável)
+        function gerarCodigoBoleto() {
+            let codigo = '';
+            for (let i = 0; i < 4; i++) {
+                let parte = '';
+                for (let j = 0; j < 11; j++) {
+                    parte += Math.floor(Math.random() * 10);
+                }
+                codigo += parte;
+                if (i < 3) codigo += ' ';
+            }
+            return codigo;
+        }
+
+        // Função para calcular data de vencimento (3 dias úteis)
+        function calcularVencimento() {
+            const hoje = new Date();
+            let diasUteis = 0;
+            let data = new Date(hoje);
+            
+            while (diasUteis < 3) {
+                data.setDate(data.getDate() + 1);
+                // Pular finais de semana
+                if (data.getDay() !== 0 && data.getDay() !== 6) {
+                    diasUteis++;
+                }
+            }
+            
+            return data;
+        }
+
+        // Função para formatar data
+        function formatarData(data) {
+            return data.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        // Função para carregar dados do boleto
+        function carregarDadosBoleto() {
+            const dadosCompra = JSON.parse(localStorage.getItem('dados_compra_gymfit'));
+            let valorTotal = 0;
+            
+            if (dadosCompra && dadosCompra.valorTotal) {
+                valorTotal = dadosCompra.valorTotal;
+            } else {
+                // Fallback
+                valorTotal = 100.00;
+            }
+            
+            document.getElementById('valorTotal').textContent = `R$ ${valorTotal.toFixed(2)}`;
+            document.getElementById('valorBoleto').textContent = `R$ ${valorTotal.toFixed(2)}`;
+            
+            // Calcular e exibir data de vencimento
+            dataVencimento = calcularVencimento();
+            document.getElementById('dataVencimento').textContent = formatarData(dataVencimento);
+            document.getElementById('vencimentoDetalhe').textContent = formatarData(dataVencimento);
+            
+            // Gerar números do boleto
+            numeroBoletoGerado = gerarNumeroBoleto();
+            document.getElementById('numeroBoleto').textContent = numeroBoletoGerado;
+            
+            const codigoBoleto = gerarCodigoBoleto();
+            document.getElementById('codigoBoleto').textContent = codigoBoleto;
+        }
+
+        // Função para gerar boleto
+        function gerarBoleto() {
+            document.getElementById('loading').style.display = 'block';
+            
+            // Simular geração do boleto
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                
+                // Salvar dados do pagamento
+                const dadosCompra = JSON.parse(localStorage.getItem('dados_compra_gymfit')) || {};
+                dadosCompra.metodoPagamento = 'boleto';
+                dadosCompra.numeroBoleto = numeroBoletoGerado;
+                dadosCompra.dataVencimento = dataVencimento;
+                localStorage.setItem('dados_compra_gymfit', JSON.stringify(dadosCompra));
+                
+                // Mostrar modal de sucesso
+                document.getElementById('modalSucesso').style.display = 'flex';
+                
+                // Adicionar efeito visual no boleto
+                document.querySelector('.boleto-preview').classList.add('pulse');
+            }, 2000);
+        }
+
+        // Função para imprimir boleto
+        function imprimirBoleto() {
+            const conteudoBoleto = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Boleto - GYM FIT</title>
+                    <style>
+                        body { 
+                            font-family: Arial, sans-serif; 
+                            margin: 20px;
+                            color: #000;
+                        }
+                        .boleto { 
+                            border: 2px solid #000; 
+                            padding: 20px; 
+                            max-width: 800px;
+                            margin: 0 auto;
+                        }
+                        .header { 
+                            text-align: center; 
+                            margin-bottom: 20px;
+                        }
+                        .codigo-barras { 
+                            background: #f0f0f0; 
+                            padding: 15px; 
+                            margin: 15px 0;
+                            text-align: center;
+                        }
+                        .linha-barras {
+                            height: 40px;
+                            background: #000;
+                            margin-bottom: 10px;
+                        }
+                        .detalhes { 
+                            margin-top: 20px;
+                        }
+                        .linha { 
+                            display: flex; 
+                            justify-content: space-between; 
+                            margin: 8px 0;
+                            border-bottom: 1px solid #ccc;
+                            padding-bottom: 5px;
+                        }
+                        @media print {
+                            body { margin: 0; }
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="boleto">
+                        <div class="header">
+                            <h1>BOLETO BANCÁRIO</h1>
+                            <h2>GYM FIT SUPPLEMENTS</h2>
+                        </div>
+                        
+                        <div class="codigo-barras">
+                            <div class="linha-barras"></div>
+                            <div style="font-family: monospace; font-size: 12px;">
+                                ${document.getElementById('numeroBoleto').textContent}
+                            </div>
+                        </div>
+                        
+                        <div class="detalhes">
+                            <div class="linha">
+                                <strong>Beneficiário:</strong>
+                                <span>GYM FIT SUPPLEMENTS LTDA</span>
+                            </div>
+                            <div class="linha">
+                                <strong>CNPJ:</strong>
+                                <span>12.345.678/0001-90</span>
+                            </div>
+                            <div class="linha">
+                                <strong>Valor:</strong>
+                                <span>${document.getElementById('valorBoleto').textContent}</span>
+                            </div>
+                            <div class="linha">
+                                <strong>Vencimento:</strong>
+                                <span>${document.getElementById('vencimentoDetalhe').textContent}</span>
+                            </div>
+                            <div class="linha">
+                                <strong>Código:</strong>
+                                <span style="font-family: monospace; font-size: 10px;">
+                                    ${document.getElementById('codigoBoleto').textContent}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 30px; font-size: 12px; color: #666;">
+                            <strong>Instruções:</strong> Pagável em qualquer banco até a data de vencimento.
+                        </div>
+                    </div>
+                    
+                    <div class="no-print" style="text-align: center; margin-top: 20px;">
+                        <button onclick="window.print()" style="padding: 10px 20px; background: #8B0000; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            Imprimir Boleto
+                        </button>
+                        <button onclick="window.close()" style="padding: 10px 20px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+                            Fechar
+                        </button>
+                    </div>
+                    
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `;
+            
+            const janela = window.open('', '_blank');
+            janela.document.write(conteudoBoleto);
+            janela.document.close();
+        }
+
+        // Função para enviar por email (simulação)
+        function enviarPorEmail() {
+            alert('Boleto enviado para o e-mail cadastrado! 📧\n\nVerifique sua caixa de entrada e spam.');
+        }
+
+        // Função para fechar modal
+        function fecharModal() {
+            document.getElementById('modalSucesso').style.display = 'none';
+        }
+
+        // Funções de navegação
+        function voltarParaOpcoes() {
+            if (confirm('Deseja cancelar a geração do boleto?')) {
+                window.location.href = 'opcoes-pagamento.html';
+            }
+        }
+
+        function cancelarPagamento() {
+            if (confirm('Deseja cancelar a geração do boleto?')) {
+                window.location.href = 'opcoes-pagamento.html';
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarDadosBoleto();
+            
+            // Adicionar efeitos de interação
+            const botoes = document.querySelectorAll('.btn-acao, .btn-pagamento');
+            botoes.forEach(botao => {
+                botao.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                
+                botao.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                });
+            });
+        });
+
+        // Fechar modal clicando fora
+        document.getElementById('modalSucesso').addEventListener('click', function(e) {
+            if (e.target === this) {
+                fecharModal();
+            }
+        });
+    </script>
+</body>
+</html>

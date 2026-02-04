@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIX - GYM FIT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .cabecalho-pagamento {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 10px 0;
+        }
+        
+        .voltar-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            margin-right: 20px;
+            transition: color 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .voltar-btn:hover {
+            color: #8B0000;
+        }
+        
+        .titulo-pagamento {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            flex: 1;
+        }
+        
+        .info-pagamento {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .beneficio-pix {
+            background: linear-gradient(135deg, #32CD32, #228B22);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .qrcode-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .qrcode {
+            width: 200px;
+            height: 200px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .qrcode canvas {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .instrucoes {
+            color: #666;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .codigo-pix {
+            background: #2a2a2a;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .codigo-texto {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            word-break: break-all;
+            color: #ccc;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .btn-copiar {
+            background: #8B0000;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn-copiar:hover {
+            background: #A52A2A;
+            transform: translateY(-1px);
+        }
+        
+        .btn-copiar.copied {
+            background: #32CD32;
+        }
+        
+        .detalhes-pagamento {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .linha-detalhe {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        
+        .label {
+            color: #ccc;
+        }
+        
+        .valor {
+            font-weight: 600;
+        }
+        
+        .desconto-pix {
+            color: #32CD32;
+            font-weight: 700;
+        }
+        
+        .timer-container {
+            background: #8B0000;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .timer {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .spinner {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #8B0000;
+        }
+        
+        .total-pagamento {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .label-total {
+            font-size: 16px;
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+        
+        .valor-total {
+            font-size: 28px;
+            font-weight: 700;
+            color: #8B0000;
+        }
+        
+        .botoes-pagamento {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn-pagamento {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-cancelar {
+            background: #333;
+            color: white;
+        }
+        
+        .btn-cancelar:hover {
+            background: #444;
+        }
+        
+        .btn-confirmar {
+            background: linear-gradient(135deg, #32CD32, #228B22);
+            color: white;
+        }
+        
+        .btn-confirmar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(50, 205, 50, 0.4);
+        }
+
+        /* Responsividade */
+        @media (max-width: 375px) {
+            .qrcode {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .titulo-pagamento {
+                font-size: 20px;
+            }
+            
+            .timer {
+                font-size: 20px;
+            }
+        }
+
+        /* Animações */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cabecalho-pagamento">
+            <button class="voltar-btn" onclick="voltarParaOpcoes()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="titulo-pagamento">Pagamento PIX</h1>
+        </div>
+        
+        <div class="info-pagamento">
+            <div class="beneficio-pix">
+                <i class="fas fa-bolt"></i> 5% DE DESCONTO NO PIX
+            </div>
+            
+            <div class="timer-container">
+                <div>⏰ TEMPO RESTANTE PARA PAGAMENTO</div>
+                <div class="timer" id="timer">30:00</div>
+                <div style="font-size: 12px;">Após este tempo, o QR Code expira</div>
+            </div>
+            
+            <div class="qrcode-container">
+                <h3 style="color: #000; margin-bottom: 15px;">Escaneie o QR Code</h3>
+                <div class="qrcode" id="qrcode">
+                    <!-- QR Code será gerado aqui -->
+                </div>
+                <div class="instrucoes">
+                    1. Abra o app do seu banco<br>
+                    2. Toque em "Pagar com PIX"<br>
+                    3. Escaneie o código acima
+                </div>
+            </div>
+            
+            <div style="margin: 20px 0; color: #ccc; font-size: 14px;">
+                <strong>OU</strong>
+            </div>
+            
+            <div class="codigo-pix">
+                <div style="color: #ccc; margin-bottom: 10px; font-size: 14px;">
+                    <i class="fas fa-copy"></i> Código PIX (Copie e Cole)
+                </div>
+                <div class="codigo-texto" id="codigoPix">
+                    <!-- Código PIX será gerado aqui -->
+                </div>
+                <button class="btn-copiar" onclick="copiarCodigoPix()" id="btnCopiar">
+                    <i class="fas fa-copy"></i> Copiar Código PIX
+                </button>
+            </div>
+            
+            <div class="detalhes-pagamento">
+                <div class="linha-detalhe">
+                    <span class="label">Valor Original:</span>
+                    <span class="valor" id="valorOriginal">R$ 0,00</span>
+                </div>
+                <div class="linha-detalhe">
+                    <span class="label">Desconto PIX (5%):</span>
+                    <span class="valor desconto-pix" id="valorDesconto">- R$ 0,00</span>
+                </div>
+                <div class="linha-detalhe">
+                    <span class="label">Valor a Pagar:</span>
+                    <span class="valor" id="valorPix">R$ 0,00</span>
+                </div>
+                <div class="linha-detalhe">
+                    <span class="label">Beneficiário:</span>
+                    <span class="valor">GYM FIT SUPPLEMENTS</span>
+                </div>
+                <div class="linha-detalhe">
+                    <span class="label">CNPJ:</span>
+                    <span class="valor">12.345.678/0001-90</span>
+                </div>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <p>Verificando pagamento...</p>
+                <p style="font-size: 12px; color: #888;">Não feche esta página</p>
+            </div>
+        </div>
+        
+        <div class="botoes-pagamento">
+            <button class="btn-pagamento btn-cancelar" onclick="cancelarPagamento()">
+                Cancelar
+            </button>
+            <button class="btn-pagamento btn-confirmar" onclick="verificarPagamento()">
+                Já Paguei
+            </button>
+        </div>
+    </div>
+
+    <!-- Biblioteca para gerar QR Code -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
+    <script>
+        let tempoRestante = 30 * 60; // 30 minutos em segundos
+        let timerInterval;
+        let codigoPixGerado = '';
+
+        // Função para gerar código PIX aleatório
+        function gerarCodigoPix() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '00020126580014br.gov.bcb.pix0136';
+            
+            // Gerar parte aleatória do código
+            for (let i = 0; i < 40; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            
+            // Adicionar informações fixas do PIX
+            result += '5204000053039865406';
+            
+            // Adicionar valor (será atualizado depois)
+            result += '5802BR5907GYM FIT6008SAO PAULO62070503***6304';
+            
+            // Adicionar CRC (simulado)
+            result += 'ABCD';
+            
+            return result;
+        }
+
+        // Função para gerar QR Code
+        function gerarQRCode() {
+            const qrcodeElement = document.getElementById('qrcode');
+            const codigoPixElement = document.getElementById('codigoPix');
+            
+            // Gerar código PIX único
+            codigoPixGerado = gerarCodigoPix();
+            codigoPixElement.textContent = codigoPixGerado;
+            
+            // Gerar QR Code
+            QRCode.toCanvas(qrcodeElement, codigoPixGerado, {
+                width: 180,
+                margin: 1,
+                color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                }
+            }, function(error) {
+                if (error) {
+                    console.error(error);
+                    qrcodeElement.innerHTML = '<div style="color: #000; text-align: center; padding: 20px;">Erro ao gerar QR Code</div>';
+                }
+            });
+        }
+
+        // Função para copiar código PIX
+        function copiarCodigoPix() {
+            const btnCopiar = document.getElementById('btnCopiar');
+            
+            navigator.clipboard.writeText(codigoPixGerado).then(() => {
+                btnCopiar.innerHTML = '<i class="fas fa-check"></i> Código Copiado!';
+                btnCopiar.classList.add('copied');
+                
+                setTimeout(() => {
+                    btnCopiar.innerHTML = '<i class="fas fa-copy"></i> Copiar Código PIX';
+                    btnCopiar.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+                alert('Erro ao copiar código. Tente novamente.');
+            });
+        }
+
+        // Função para calcular valores com desconto PIX
+        function calcularValoresPix() {
+    const dadosCompra = JSON.parse(localStorage.getItem('dados_compra_gymfit'));
+    
+    if (dadosCompra && dadosCompra.valorTotal) {
+        const valorOriginal = dadosCompra.valorTotal;
+        const descontoPix = valorOriginal * 0.05; // 5% de desconto
+        const valorComDesconto = valorOriginal - descontoPix;
+        
+        document.getElementById('valorOriginal').textContent = `R$ ${valorOriginal.toFixed(2)}`;
+        document.getElementById('valorDesconto').textContent = `- R$ ${descontoPix.toFixed(2)}`;
+        document.getElementById('valorPix').textContent = `R$ ${valorComDesconto.toFixed(2)}`;
+        
+        // Atualizar dados no localStorage
+        dadosCompra.valorComDescontoPix = valorComDesconto;
+        dadosCompra.descontoPixAplicado = descontoPix;
+        localStorage.setItem('dados_compra_gymfit', JSON.stringify(dadosCompra));
+    } else {
+        // Fallback - calcular do carrinho
+        const carrinho = JSON.parse(localStorage.getItem('carrinho_gymfit')) || [];
+        const valorProdutos = carrinho.reduce((total, produto) => total + (produto.preco * produto.quantidade), 0);
+        const frete = 15.00;
+        const desconto = 0;
+        const valorOriginal = valorProdutos + frete - desconto;
+        const descontoPix = valorOriginal * 0.05;
+        const valorComDesconto = valorOriginal - descontoPix;
+        
+        document.getElementById('valorOriginal').textContent = `R$ ${valorOriginal.toFixed(2)}`;
+        document.getElementById('valorDesconto').textContent = `- R$ ${descontoPix.toFixed(2)}`;
+        document.getElementById('valorPix').textContent = `R$ ${valorComDesconto.toFixed(2)}`;
+    }
+}
+
+        // Timer para expiração do PIX
+        function iniciarTimer() {
+            timerInterval = setInterval(() => {
+                tempoRestante--;
+                
+                const minutos = Math.floor(tempoRestante / 60);
+                const segundos = tempoRestante % 60;
+                
+                document.getElementById('timer').textContent = 
+                    `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+                
+                // Piscar quando faltar 5 minutos
+                if (tempoRestante === 5 * 60) {
+                    document.getElementById('timer').classList.add('pulse');
+                }
+                
+                // Expirar
+                if (tempoRestante <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('timer').textContent = 'EXPIRADO';
+                    document.getElementById('timer').style.color = '#ff4444';
+                    alert('QR Code PIX expirado! Por favor, gere um novo.');
+                }
+            }, 1000);
+        }
+
+        // Verificar pagamento (simulação)
+        function verificarPagamento() {
+            document.getElementById('loading').style.display = 'block';
+            
+            // Simular verificação de pagamento
+            setTimeout(() => {
+                // Em uma aplicação real, aqui você faria uma requisição para verificar o pagamento
+                const pagamentoAprovado = Math.random() > 0.2; // 80% de chance de sucesso
+                
+                if (pagamentoAprovado) {
+                    window.location.href = 'confirmacao-pagamento.html';
+                } else {
+                    document.getElementById('loading').style.display = 'none';
+                    alert('Pagamento ainda não identificado. Tente novamente em alguns instantes.');
+                }
+            }, 3000);
+        }
+
+        function voltarParaOpcoes() {
+            if (confirm('Deseja cancelar o pagamento PIX?')) {
+                clearInterval(timerInterval);
+                window.location.href = 'opcoes-pagamento.html';
+            }
+        }
+
+        function cancelarPagamento() {
+            if (confirm('Deseja cancelar o pagamento PIX?')) {
+                clearInterval(timerInterval);
+                window.location.href = 'opcoes-pagamento.html';
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            gerarQRCode();
+            calcularValoresPix();
+            iniciarTimer();
+            
+            // Adicionar efeitos de interação
+            const btnCopiar = document.getElementById('btnCopiar');
+            btnCopiar.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.98)';
+            });
+            
+            btnCopiar.addEventListener('touchend', function() {
+                this.style.transform = '';
+            });
+        });
+    </script>
+</body>
+</html>

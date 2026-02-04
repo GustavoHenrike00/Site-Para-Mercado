@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Login - GYM FIT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<style>
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Orbitron', 'Segoe UI', sans-serif;
+}
+
+body {
+    background-color: #000000;
+    color: #FFFFFF;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.container {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-shrink: 0;
+}
+
+.logo {
+    width: 120px;
+    height: auto;
+    max-width: 40vw;
+}
+
+.login-card {
+    background-color: #2B2B2B;
+    border-radius: 1rem;
+    padding: 2rem 1.5rem;
+    width: 100%;
+    max-width: 90vw;
+    box-shadow: 0 0.25rem 0.5rem rgba(176, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-0.125rem);
+}
+
+.login-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #FFFFFF;
+    letter-spacing: 0.05rem;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+    width: 100%;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    color: #FFFFFF;
+    font-weight: 700;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.875rem;
+    background-color: #000000;
+    border: 1px solid #B00000;
+    border-radius: 0.5rem;
+    color: #FFFFFF;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #FFFFFF;
+    box-shadow: 0 0 0 0.125rem rgba(176, 0, 0, 0.2);
+    transform: scale(1.02);
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    margin: 1rem 0;
+    font-size: 0.875rem;
+    color: #FFFFFF;
+    line-height: 1.5;
+}
+
+.checkbox-group input {
+    margin-right: 0.5rem;
+    margin-top: 0.1875rem;
+    accent-color: #B00000;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 1rem;
+    background-color: #B00000;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.btn-login:hover, .btn-login:active {
+    background-color: #800000;
+    transform: scale(0.98);
+    box-shadow: 0 0.25rem 0.5rem rgba(176, 0, 0, 0.3);
+}
+
+.links-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem 0;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.link {
+    color: #B00000;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 700;
+    transition: color 0.3s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.link-cadastro {
+    color: #FFFFFF;
+}
+
+.link:hover {
+    color: #FFFFFF;
+    text-decoration: underline;
+}
+
+.divider {
+    text-align: center;
+    margin: 1.5rem 0;
+    position: relative;
+    color: #FFFFFF;
+    font-size: 0.875rem;
+}
+
+.divider::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #2B2B2B;
+}
+
+.divider span {
+    background-color: #000000;
+    padding: 0 1rem;
+    position: relative;
+}
+
+.social-login {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.social-btn {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000000;
+    border: 1px solid #B00000;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.social-btn:hover, .social-btn:active {
+    transform: scale(0.98);
+    border-color: #FFFFFF;
+    box-shadow: 0 0.25rem 0.5rem rgba(176, 0, 0, 0.3);
+}
+
+.social-btn img {
+    width: 1.5rem;
+    height: auto;
+}
+
+/* Media queries para mobile (320-430px) */
+@media (max-width: 430px) {
+    body {
+        padding: 0.5rem;
+    }
+    
+    .login-card {
+        padding: 1.5rem 1rem;
+        border-radius: 0.75rem;
+    }
+    
+    .links-container {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+    
+    .link {
+        font-size: 0.8125rem;
+    }
+    
+    .social-login {
+        gap: 0.75rem;
+    }
+    
+    .social-btn {
+        width: 2.75rem;
+        height: 2.75rem;
+    }
+}
+
+@media (max-width: 320px) {
+    .logo {
+        width: 100px;
+    }
+    
+    .login-title {
+        font-size: 1.25rem;
+    }
+    
+    .form-input {
+        font-size: 0.9375rem;
+        padding: 0.75rem;
+    }
+}
+</style>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img class="logo" src="img/logo.png" alt="GYM FIT Logo">
+        </div>
+        
+        <div class="login-card">
+            <h2 class="login-title">Logar na sua conta</h2>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" id="email" class="form-input" placeholder="Digite seu e-mail" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">Senha</label>
+                    <input type="password" id="password" class="form-input" placeholder="Digite sua senha" required>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms">
+                    <label for="terms">Lembre de mim</label>
+                </div>
+                
+                <button type="submit" class="btn-login">Logar-se</button>
+                
+                <div class="links-container">
+                    <a href="Cadastro.html" class="link link-cadastro">Cadastrar-se</a>
+                    <a href="#" class="link">Esqueci a Senha</a>
+                </div>
+                
+                <div class="divider">
+                    <span>Ou entre com</span>
+                </div>
+                
+                <div class="social-login">
+                    <button type="button" class="social-btn" aria-label="Google">
+                        <img src="img/Google.png" alt="Google">
+                    </button>
+                    <button type="button" class="social-btn" aria-label="Facebook">
+                        <img src="img/facebook.png" alt="Facebook">
+                    </button>
+                    <button type="button" class="social-btn" aria-label="X">
+                        <img src="img/x.png" alt="X">
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Simulação de login com feedback mobile
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    if (email && password) {
+        // Feedback visual
+        const btn = document.querySelector('.btn-login');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logando...';
+        btn.disabled = true;
+        setTimeout(() => {
+            window.location.href = 'Catalogo.html'; // Redireciona para catálogo
+        }, 1500);
+    } else {
+        showToast('Preencha email e senha');
+    }
+});
+
+// Redirecionamento para recuperação de senha
+document.querySelector('.link[href="#"]').addEventListener('click', function(e) {
+    e.preventDefault();
+    showToast('Redirecionando para recuperação...');
+    // Simular redirecionamento
+});
+
+// Login social com feedback
+document.querySelectorAll('.social-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const platform = this.querySelector('img').alt;
+        const btn = this;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+        setTimeout(() => {
+            showToast(`Login com ${platform} selecionado`);
+            btn.innerHTML = this.querySelector('img').outerHTML;
+            btn.disabled = false;
+        }, 1500);
+    });
+});
+
+// Função toast para feedback mobile
+function showToast(message) {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed; top: 20%; left: 50%; transform: translateX(-50%);
+        background: #B00000; color: #FFFFFF; padding: 0.75rem 1rem;
+        border-radius: 0.5rem; font-size: 0.875rem; z-index: 1000;
+        animation: slideIn 0.3s ease;
+    `;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
+
+// Adicionar feedback toque a botões
+document.querySelectorAll('button, .link').forEach(el => {
+    el.addEventListener('touchstart', function() {
+        this.style.transform = 'scale(0.98)';
+    });
+    el.addEventListener('touchend', function() {
+        this.style.transform = 'scale(1)';
+    });
+});
+    </script>
+
+    <script src="js/script-login.js"></script>
+</body>
+</html>

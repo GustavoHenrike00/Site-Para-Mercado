@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - GYM FIT</title>
+    <link rel="stylesheet" href="css/Style-Login.css">
+</head>
+
+<body>
+    <div class="container" >
+        <div class="logo-container">
+            <img class="logo" src="img/logo.png" alt="GYM FIT Logo">
+        </div>
+        
+        <div class="login-card">
+            <h2 class="login-title">Logar a sua conta</h2>
+            
+            <form id="loginForm" method="post" action="login.jsp"></form>
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" id="email" class="form-input" placeholder="Digite seu e-mail" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">Senha</label>
+                    <input type="password" id="password" class="form-input" placeholder="Digite sua senha" required>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms">
+                    <label for="terms">Concordo que tudo será excluído ...</label>
+                </div>
+                
+                <a href="Catalogo.html"><button type="button" class="btn-login">Logar-Se</button></a>
+                
+                <div class="links-container">
+                    <a href="Cadastro.html" class="link link-cadastro">Cadastrar-Se</a>
+                    <a href="#" class="link">Esqueci a Senha</a>
+                </div>
+                
+                <div class="divider">
+                    <span>Entre Com</span>
+                </div>
+                
+                <div class="social-login">
+                    <button type="button" class="social-btn">
+                        <img src="img/Google.png" alt="Google">
+                    </button>
+                    <button type="button" class="social-btn">
+                        <img src="img/facebook.png" alt="Facebook">
+                    </button>
+                    <button type="button" class="social-btn">
+                        <img src="img/x.png" alt="X">
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="js/Script-Login.js"></script>
+</body>
+</html>

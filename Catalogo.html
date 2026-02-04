@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GYM FIT - Suplementos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/Style-Catalogo.css">
+</head>
+
+<body>
+    <!-- MENU LATERAL -->
+    <div class="menu-lateral" id="menuLateral">
+        <i class="fa fa-times" id="closeMenu"></i>
+        <ul>
+            <li><a href="Catalogo.html">Inicio / Catalogo</a></li>
+            <li><a href="Carrinho.html">Carrinho</a></li>
+            <li><a href="#">Dados Da Conta</a></li>
+            <li><a href="#">Notificações</a></li>
+            <li><a href="#">Configurações</a></li>
+            <li><a href="Login.html">Sair</a></li>
+        </ul>
+    </div>
+
+    <!-- CABEÇALHO -->
+    <header>
+        <div class="logo">
+            <img src="img/logo.png" alt="GYM FIT">
+        </div>
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" placeholder="O que deseja saber...">
+                <i class="fa fa-search"></i>
+            </div>
+            <div class="icons">
+                <i id="menuBtn" class="fa fa-bars"></i>
+                <i class="fa fa-shopping-cart"></i>
+            </div>
+        </div>
+    </header>
+
+    <div class="cabecalho-produtos">
+      <h2 class="titulo-secao">Suplementos</h2>
+      
+      <!-- ======== FILTROS ======== -->
+      <div class="Filtros">
+          <div class="inner">
+              <div class="tag active" data-categoria="todos"><span>#</span>Todos</div>
+              <div class="tag" data-categoria="Proteínas"><span>#</span>Proteínas</div>
+              <div class="tag" data-categoria="Creatinas"><span>#</span>Creatinas</div>
+              <div class="tag" data-categoria="Aminoácidos"><span>#</span>Aminoácidos</div>
+              <div class="tag" data-categoria="Pré-Treino"><span>#</span>Pré-Treino</div>
+              <div class="tag" data-categoria="Vitaminas"><span>#</span>Vitaminas</div>
+              <div class="tag" data-categoria="Termogênicos"><span>#</span>Termogênicos</div>
+              <div class="tag" data-categoria="Acessórios"><span>#</span>Acessórios</div>
+          </div>
+      </div>
+  </div>
+  
+  <div class="grade-produtos" id="gradeProdutos">
+      <!-- Os produtos serão gerados automaticamente via JavaScript -->
+  </div>
+
+    <!-- O resto do HTML mantém igual -->
+    <script src="js/Script-Catalogo.js"></script>
+    <!-- ... -->
+</body>
+</html>

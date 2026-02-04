@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Rastreamento / Mapa Gamificado</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root{
+    --bg:#000;
+    --card:#0f0f10;
+    --muted:#9a9a9a;
+    --accent:#ff7b00;
+    --card-2:#111;
+  }
+  *{box-sizing:border-box;font-family:Inter, "Segoe UI", Roboto, Arial, sans-serif}
+  html,body{height:100%;margin:0;background:var(--bg);color:#fff}
+  .wrap{max-width:420px;margin:18px auto;padding:14px;}
+  header{display:flex;align-items:center;gap:12px}
+  header i{cursor:pointer;color:#fff;opacity:.86}
+  h1{font-size:20px;margin:0;font-weight:600}
+  .map-frame{
+    margin-top:12px;
+    border-radius:12px;
+    overflow:hidden;
+    background:linear-gradient(180deg,#1a1a1a,#0f0f0f);
+    border:1px solid #1d1d1d;
+  }
+  .map-controls{display:flex;gap:8px;padding:12px}
+  .map-controls button{background:#111;border:1px solid #222;color:#fff;padding:10px 12px;border-radius:8px;cursor:pointer}
+  .map-controls .primary{background:var(--accent);border-color:rgba(255,123,0,.2)}
+  .hint{font-size:12px;color:var(--muted);padding:8px 12px}
+  .info-card{background:var(--card);border-radius:12px;padding:14px;margin-top:12px;border:1px solid #161616}
+  .info-card .small{color:var(--muted);font-size:13px}
+  .product{font-weight:700;font-size:16px;margin:8px 0}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .addr{font-size:13px;color:#dcdcdc;display:flex;align-items:center;gap:8px}
+  .driver{display:flex;gap:10px;align-items:center;margin-top:10px}
+  .avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#ff5500);display:flex;align-items:center;justify-content:center;font-weight:700}
+  .actions{display:flex;gap:8px;margin-left:auto}
+  .action-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#111;border:1px solid #222;cursor:pointer}
+  /* Canvas game */
+  .game-wrap{display:block;padding:12px}
+  canvas{width:100%;height:360px;background:linear-gradient(180deg,#f4b67a22,#f4b67a22);border-radius:12px;display:block}
+  .hud{display:flex;justify-content:space-between;gap:10px;margin-top:8px}
+  .hud .box{background:#0c0c0c;padding:8px 10px;border-radius:8px;border:1px solid #1a1a1a;font-size:13px}
+  .controls{margin-top:8px;display:flex;gap:10px;align-items:center;justify-content:center}
+  .btn-ghost{background:#111;padding:10px 12px;border-radius:10px;border:1px solid #222;cursor:pointer}
+  .footer-note{font-size:12px;color:var(--muted);margin-top:10px}
+  /* responsive */
+  @media (max-width:420px){
+    canvas{height:320px}
+    .wrap{padding:10px}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <i class="fas fa-arrow-left" title="Voltar" onclick="history.back()"></i>
+      <h1>Rastrear o Produto</h1>
+    </header>
+
+    <!-- MAPA REAL (Google Maps) -->
+    <div class="map-frame" id="mapFrame">
+      <!-- If you have a Google Maps embed URL for the route, paste it into the iframe below.
+           Example iframe (replace src with your Google Maps share link or embed with Directions):
+        <iframe src="YOUR_GOOGLE_MAPS_EMBED_URL" width="100%" height="360" style="border:0"></iframe>
+      -->
+      <div style="padding:18px">
+        <div style="display:flex;align-items:center;gap:12px;justify-content:space-between">
+          <div>
+            <div style="font-size:13px;color:var(--muted)">Mapa Real (Google Maps)</div>
+            <div style="font-weight:700;margin-top:6px">Rota do Transporte → Sua Casa</div>
+          </div>
+          <div>
+            <button class="primary" id="useGameBtn">Usar Mapa Gamificado</button>
+          </div>
+        </div>
+
+        <p class="hint">Cole aqui o <strong>link de compartilhamento do Google Maps</strong> ou o <strong>embed</strong> da rota. Caso não tenha, clique em "Usar Mapa Gamificado" para abrir a versão interativa.</p>
+
+        <!-- Input para colar link/iframe -->
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <input id="mapsInput" type="text" placeholder="Cole aqui o link do Google Maps (share link ou embed)" style="flex:1;padding:10px;border-radius:8px;border:1px solid #222;background:#0b0b0b;color:#fff" />
+          <button class="btn-ghost" onclick="tryEmbed()">Abrir</button>
+        </div>
+
+        <div id="mapsEmbedArea" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <!-- INFORMAÇÕES -->
+    <div class="info-card">
+      <div class="small">Chegará em até 3 dias</div>
+      <div class="product">Camisa Da Holanda – Embraer RN</div>
+      <div class="row">
+        <div style="display:flex;flex-direction:column">
+          <div class="small">Pagamento</div>
+          <div style="font-weight:600">R$ 56,00 • Cartão de Crédito</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end">
+          <div class="small">Status</div>
+          <div style="font-weight:700;color:var(--accent)" id="statusText">Em rota</div>
+        </div>
+      </div>
+
+      <div class="addr" style="margin-top:10px"><i class="fas fa-map-marker-alt" style="color:var(--accent)"></i> Rua Guilherme de Freitas, Nº 32 – Niterói RJ</div>
+
+      <div class="driver">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="avatar">G</div>
+          <div>
+            <div style="font-weight:700">Gustavo Henrique</div>
+            <div style="font-size:12px;color:var(--muted)">Assistente • Entregador</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <div class="action-btn" title="Ligar" onclick="alert('Discar para o entregador...')"><i class="fas fa-phone"></i></div>
+          <div class="action-btn" title="Chat" style="background:var(--accent);color:#000" onclick="alert('Abrir chat...')"><i class="fas fa-comment"></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAPA / MINI GAME (fallback interativo) -->
+    <div class="map-frame" id="gameFrame" style="display:none;margin-top:12px">
+      <div style="padding:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="font-weight:700">Mapa Gamificado — Entregas</div>
+          <div style="font-size:13px;color:var(--muted)" id="gameTimer">Tempo: 00:00</div>
+        </div>
+
+        <div class="game-wrap">
+          <canvas id="gameCanvas" width="720" height="480"></canvas>
+          <div class="hud">
+            <div class="box">Entregas: <span id="deliveredCount">0</span>/<span id="totalCount">3</span></div>
+            <div class="box">Pacotes: <span id="packagesLeft">3</span></div>
+            <div class="box">Pontuação: <span id="score">0</span></div>
+          </div>
+
+          <div class="controls">
+            <button class="btn-ghost" onclick="resetGame()">Reiniciar</button>
+            <button class="btn-ghost" onclick="togglePause()" id="pauseBtn">Pausar</button>
+            <button class="btn-ghost" onclick="showHint()">Dica</button>
+          </div>
+
+          <div class="footer-note">Use as setas do teclado ou toque/arraste para guiar a van. Entregue os pacotes na casa marcada em amarelo.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+/*
+  Funcionalidade:
+  - Se o usuário colar um link do Google Maps (share ou embed), o código tenta inserir um iframe.
+  - Se não houver link ou usuário clicar em "Usar Mapa Gamificado", abre o mini-game.
+  - Mini-game:
+    - Grid-based "bairro"
+    - Van controlável por teclado/touch
+    - Casas alvo onde entregar pacotes
+    - HUD com entregas, tempo, score
+*/
+
+// ---------- MAP EMBED HANDLER ----------
+function tryEmbed(){
+  const input = document.getElementById('mapsInput').value.trim();
+  const area = document.getElementById('mapsEmbedArea');
+  if(!input){
+    alert('Cole o link/iframe do Google Maps ou clique em "Usar Mapa Gamificado".');
+    return;
+  }
+  // If user pasted a full iframe, simply inject it (basic sanitize: allow iframe tag)
+  if(input.includes('<iframe')){
+    area.innerHTML = input;
+    document.getElementById('gameFrame').style.display = 'none';
+    return;
+  }
+  // Try to create an iframe from a share link (Google maps share URL)
+  let src = input;
+  // If is a regular Google Maps place/share link, try to convert to embed format:
+  if(src.includes('https://www.google.com/maps') || src.includes('https://maps.app.goo.gl')){
+    // Use simple conversion: use "https://www.google.com/maps/embed?..." if present
+    if(src.includes('/place/') || src.includes('/dir/') || src.includes('/@')){
+      // Best-effort: add as embed url by prefixing with "https://www.google.com/maps/embed?pb=" NOT always possible without pb param.
+      // So fallback to opening link in new tab and show a message.
+      area.innerHTML = '<div style="padding:12px;border-radius:8px;background:#070707;border:1px solid #1b1b1b">Link detectado. Não foi possível gerar embed automático. <button style="background:var(--accent);color:#000;padding:8px;border-radius:8px;border:none;margin-left:8px;cursor:pointer" onclick="openLink()">Abrir no Google Maps</button></div>';
+      document.getElementById('gameFrame').style.display = 'block';
+      // store link
+      window._gm_link = src;
+    } else {
+      area.innerHTML = '<div style="color:var(--muted)">Link colado. Se for um link de compartilhamento do Google Maps, clique em "Abrir no Google Maps".</div>';
+    }
+    return;
+  }
+  // If user gave an embed url directly
+  if(src.includes('embed')){
+    area.innerHTML = `<iframe src="${src}" width="100%" height="360" style="border:0"></iframe>`;
+    document.getElementById('gameFrame').style.display = 'none';
+    return;
+  }
+  // Else assume it's an arbitrary url - open it
+  if(src.startsWith('http')){
+    area.innerHTML = '<div style="padding:12px;color:var(--muted)">URL detectada. Clique em abrir para visualizar.</div>';
+    window._gm_link = src;
+    document.getElementById('gameFrame').style.display = 'block';
+    return;
+  }
+  alert('Formato não reconhecido. Cole o link de compartilhamento do Google Maps ou o código iframe de embed.');
+}
+function openLink(){
+  const l = window._gm_link || document.getElementById('mapsInput').value.trim();
+  if(!l) return alert('Nenhum link disponível.');
+  window.open(l,'_blank');
+}
+
+// ---------- TOGGLE TO GAME ----------
+document.getElementById('useGameBtn').addEventListener('click', () => {
+  showGame();
+});
+function showGame(){
+  document.getElementById('gameFrame').style.display = 'block';
+  // Scroll to game for mobile
+  setTimeout(()=>document.getElementById('gameCanvas').scrollIntoView({behavior:'smooth'}),120);
+  startGame();
+}
+
+// If user didn't embed a map, we default show game after short delay
+setTimeout(()=>{
+  const mapsVal = document.getElementById('mapsInput').value.trim();
+  const area = document.getElementById('mapsEmbedArea');
+  if(!mapsVal && area.children.length === 0){
+    // show hint only, not auto-start game; user can click
+    // Optionally auto-open: comment in/out
+    // showGame();
+  }
+},800);
+
+// ---------- MINI-GAME IMPLEMENTATION ----------
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let gameState = {
+  running:false, paused:false, startTime:0, timeElapsed:0,
+  gridCols:12, gridRows:8, cellSize:64,
+  player:{x:1,y:1,w:40,h:26,dir:0,speed:2},
+  houses:[], delivered:0, total:3, score:0,
+  obstacles:[],
+  touch:{active:false,dx:0,dy:0,x:0,y:0}
+};
+
+document.getElementById('totalCount').textContent = gameState.totalCount = gameState.total;
+
+// Resize canvas drawing size to handle high dpi
+function fitCanvas(){
+  const ratio = window.devicePixelRatio || 1;
+  const widthCss = canvas.clientWidth;
+  const heightCss = canvas.clientHeight;
+  canvas.width = Math.floor(widthCss * ratio);
+  canvas.height = Math.floor(heightCss * ratio);
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+}
+fitCanvas();
+window.addEventListener('resize', ()=>{ fitCanvas(); drawScene(); });
+
+// Utility
+function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+
+// Initialize obstacles and houses
+function initLevel(){
+  const cols = gameState.gridCols;
+  const rows = gameState.gridRows;
+  gameState.houses = [];
+  gameState.obstacles = [];
+  gameState.player.x = 1; gameState.player.y = rows-2;
+  // Place obstacles randomly
+  for(let i=0;i<16;i++){
+    const ox = randInt(2, cols-2);
+    const oy = randInt(1, rows-2);
+    // avoid player spawn area and keep sparse
+    if(Math.hypot(ox-gameState.player.x, oy-gameState.player.y) < 2) continue;
+    gameState.obstacles.push({x:ox,y:oy});
+  }
+  // Place target houses (distinct positions)
+  const used = new Set();
+  while(gameState.houses.length < gameState.total){
+    const hx = randInt(3, cols-2);
+    const hy = randInt(1, rows-3);
+    const key = hx+','+hy;
+    if(used.has(key)) continue;
+    used.add(key);
+    gameState.houses.push({x:hx,y:hy,delivered:false});
+  }
+  gameState.delivered = 0;
+  gameState.score = 0;
+  gameState.timeElapsed = 0;
+  document.getElementById('deliveredCount').textContent = gameState.delivered;
+  document.getElementById('packagesLeft').textContent = gameState.total - gameState.delivered;
+  document.getElementById('score').textContent = gameState.score;
+  document.getElementById('gameTimer').textContent = 'Tempo: 00:00';
+}
+
+// Drawing
+function drawScene(){
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  ctx.clearRect(0,0,w,h);
+  // background (stylized neighborhood)
+  // draw street grid
+  const cols = gameState.gridCols;
+  const rows = gameState.gridRows;
+  const cell = Math.min(w/cols, (h-20)/rows);
+  gameState.cellSize = cell;
+  const mapW = cell*cols;
+  const mapH = cell*rows;
+  const offsetX = (w-mapW)/2;
+  const offsetY = (h-mapH)/2;
+  // base
+  ctx.fillStyle = '#f7e6d2';
+  ctx.fillRect(offsetX, offsetY, mapW, mapH);
+  // streets: vertical and horizontal thicker lines
+  ctx.fillStyle = '#e9b78b';
+  for(let r=0;r<rows;r++){
+    // horizontal street lines thinner to simulate blocks
+    const y = offsetY + r*cell + cell*0.7;
+    ctx.fillRect(offsetX, y, mapW, cell*0.12);
+  }
+  for(let c=0;c<cols;c++){
+    const x = offsetX + c*cell + cell*0.7;
+    ctx.fillRect(x, offsetY, cell*0.12, mapH);
+  }
+  // draw houses (small rectangles) and target houses in yellow
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const hx = offsetX + c*cell + cell*0.08;
+      const hy = offsetY + r*cell + cell*0.08;
+      const hw = cell*0.34;
+      const hh = cell*0.34;
+      // scattered small blocks as buildings
+      ctx.fillStyle = '#f3c7a2';
+      ctx.fillRect(hx,hy,hw,hh);
+      // windows
+      ctx.fillStyle = '#e8b68f';
+      ctx.fillRect(hx+4,hy+4,12,10);
+    }
+  }
+  // obstacles (parked cars, trees)
+  gameState.obstacles.forEach(ob=>{
+    const cx = offsetX + ob.x*cell + cell*0.35;
+    const cy = offsetY + ob.y*cell + cell*0.28;
+    // draw tree/car as circle/rect
+    ctx.fillStyle = '#8bbf7a';
+    ctx.beginPath(); ctx.arc(cx,cy,cell*0.16,0,Math.PI*2); ctx.fill();
+  });
+  // houses targets
+  gameState.houses.forEach((house,i)=>{
+    const cx = offsetX + house.x*cell + cell*0.5;
+    const cy = offsetY + house.y*cell + cell*0.5;
+    ctx.fillStyle = house.delivered ? '#6bd36b' : (i===0? '#ffdd57' : '#ffd280'); // first target more bright
+    ctx.fillRect(cx - cell*0.24, cy - cell*0.24, cell*0.48, cell*0.48);
+    // flag/marker
+    ctx.fillStyle = '#222';
+    ctx.font = '12px Inter, sans-serif';
+    ctx.fillText('Casa', cx - 12, cy - cell*0.3);
+  });
+  // draw player van
+  const px = offsetX + gameState.player.x*cell + cell*0.5;
+  const py = offsetY + gameState.player.y*cell + cell*0.5;
+  // van body
+  ctx.save();
+  ctx.translate(px,py);
+  ctx.rotate(gameState.player.dir);
+  ctx.fillStyle = '#333';
+  ctx.fillRect(-gameState.player.w/2, -gameState.player.h/2, gameState.player.w, gameState.player.h);
+  // windows
+  ctx.fillStyle = '#9dd7ff';
+  ctx.fillRect(-gameState.player.w/2 + 6, -gameState.player.h/2 + 4, 18, 10);
+  // wheels
+  ctx.fillStyle = '#111';
+  ctx.beginPath(); ctx.arc(-gameState.player.w/3, gameState.player.h/2 + 2, 5,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(gameState.player.w/3, gameState.player.h/2 + 2, 5,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+
+  // overlay UI icons for targets
+  // draws small dotted path from player to closest undelivered house (visual aid)
+  const undel = gameState.houses.filter(h=>!h.delivered);
+  if(undel.length>0){
+    const target = undel[0];
+    ctx.strokeStyle = 'rgba(255,123,0,0.5)';
+    ctx.setLineDash([6,6]);
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(px,py);
+    const tx = offsetX + target.x*cell + cell*0.5;
+    const ty = offsetY + target.y*cell + cell*0.5;
+    ctx.lineTo(tx,ty);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // draw mini compass / legend
+  ctx.fillStyle = '#111';
+  ctx.fillRect(w - 110, 10, 100, 42);
+  ctx.fillStyle = '#fff';
+  ctx.font = '12px Inter, sans-serif';
+  ctx.fillText('Alvo amarelo = próxima', w - 100, 30);
+  ctx.fillText('Verde = entregue', w - 100, 44);
+}
+
+// Game loop
+let lastTime = 0;
+function gameLoop(timestamp){
+  if(!gameState.running || gameState.paused) { lastTime = timestamp; requestAnimationFrame(gameLoop); return; }
+  const dt = (timestamp - lastTime) / 1000 || 0;
+  lastTime = timestamp;
+  update(dt);
+  drawScene();
+  requestAnimationFrame(gameLoop);
+}
+
+// Update player movement, collisions, deliveries, timers
+function update(dt){
+  // timer
+  gameState.timeElapsed += dt;
+  const mins = Math.floor(gameState.timeElapsed/60).toString().padStart(2,'0');
+  const secs = Math.floor(gameState.timeElapsed%60).toString().padStart(2,'0');
+  document.getElementById('gameTimer').textContent = `Tempo: ${mins}:${secs}`;
+
+  // Movement from keyboard state or touch
+  let vx=0, vy=0;
+  if(keys.ArrowUp || keys.w) vy = -1;
+  if(keys.ArrowDown || keys.s) vy = 1;
+  if(keys.ArrowLeft || keys.a) vx = -1;
+  if(keys.ArrowRight || keys.d) vx = 1;
+  // touch control influence
+  if(gameState.touch.active){
+    vx += gameState.touch.dx;
+    vy += gameState.touch.dy;
+  }
+  // normalize
+  if(vx!==0 && vy!==0){
+    vx *= 0.7071; vy *= 0.7071;
+  }
+  // attempt to move fractional cells
+  const speed = gameState.player.speed * (1 + Math.min(gameState.score/50, 0.8));
+  let newX = gameState.player.x + vx*speed*dt*2;
+  let newY = gameState.player.y + vy*speed*dt*2;
+  // clamp to grid
+  newX = Math.max(0.5, Math.min(gameState.gridCols-1.5, newX));
+  newY = Math.max(0.5, Math.min(gameState.gridRows-1.5, newY));
+  // collision with obstacles (simple)
+  const willCollide = gameState.obstacles.some(o => Math.hypot(o.x - newX, o.y - newY) < 0.8);
+  if(!willCollide){
+    gameState.player.x = newX; gameState.player.y = newY;
+  } else {
+    // bump effect: small score penalty
+    gameState.score = Math.max(0, gameState.score - 1);
+    document.getElementById('score').textContent = gameState.score;
+  }
+  // check delivery (arrived close to a house)
+  gameState.houses.forEach(h=>{
+    if(!h.delivered && Math.hypot(h.x - gameState.player.x, h.y - gameState.player.y) < 0.7){
+      h.delivered = true;
+      gameState.delivered += 1;
+      gameState.score += 10;
+      document.getElementById('deliveredCount').textContent = gameState.delivered;
+      document.getElementById('packagesLeft').textContent = Math.max(0, gameState.total - gameState.delivered);
+      document.getElementById('score').textContent = gameState.score;
+      // small feedback
+      showToast('Entrega realizada! 🎉');
+      if(gameState.delivered >= gameState.total){
+        finishLevel();
+      }
+    }
+  });
+}
+
+// keyboard handling
+const keys = {};
+window.addEventListener('keydown', e => { keys[e.key] = true; });
+window.addEventListener('keyup', e => { keys[e.key] = false; });
+
+// touch controls (basic)
+canvas.addEventListener('touchstart', function(e){
+  const t = e.touches[0];
+  gameState.touch.active = true;
+  gameState.touch.x = t.clientX; gameState.touch.y = t.clientY;
+}, {passive:true});
+canvas.addEventListener('touchmove', function(e){
+  const t = e.touches[0];
+  const dx = (t.clientX - gameState.touch.x) / 100;
+  const dy = (t.clientY - gameState.touch.y) / 100;
+  gameState.touch.dx = Math.max(-1, Math.min(1, dx));
+  gameState.touch.dy = Math.max(-1, Math.min(1, dy));
+}, {passive:true});
+canvas.addEventListener('touchend', function(e){
+  gameState.touch.active = false; gameState.touch.dx = 0; gameState.touch.dy = 0;
+}, {passive:true});
+
+// mouse drag for desktop (optional)
+let mouseDown = false;
+canvas.addEventListener('mousedown', function(e){
+  mouseDown = true;
+  gameState.touch.active = true;
+  gameState.touch.x = e.clientX; gameState.touch.y = e.clientY;
+});
+window.addEventListener('mousemove', function(e){
+  if(!mouseDown) return;
+  const dx = (e.clientX - gameState.touch.x) / 100;
+  const dy = (e.clientY - gameState.touch.y) / 100;
+  gameState.touch.dx = Math.max(-1, Math.min(1, dx));
+  gameState.touch.dy = Math.max(-1, Math.min(1, dy));
+});
+window.addEventListener('mouseup', function(){ mouseDown=false; gameState.touch.active=false; gameState.touch.dx=0; gameState.touch.dy=0; });
+
+// feedback toast
+let toastTimer = null;
+function showToast(msg){
+  let el = document.getElementById('gameToast');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'gameToast';
+    el.style.position = 'fixed';
+    el.style.left = '50%';
+    el.style.transform = 'translateX(-50%)';
+    el.style.bottom = '70px';
+    el.style.padding = '10px 16px';
+    el.style.background = '#111';
+    el.style.border = '1px solid #222';
+    el.style.borderRadius = '12px';
+    el.style.zIndex = 9999;
+    el.style.color = '#fff';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.opacity = 1;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ el.style.opacity = 0; }, 1800);
+}
+
+// finish level
+function finishLevel(){
+  gameState.running = false;
+  document.getElementById('statusText').textContent = 'Entregue';
+  showToast('Todas as entregas concluídas! 🎉');
+  // show small modal / alert-like
+  setTimeout(()=>alert(`Parabéns! Você entregou ${gameState.delivered} pacotes em ${Math.floor(gameState.timeElapsed)} segundos.\nPontuação: ${gameState.score}`), 200);
+}
+
+// Game controls
+function startGame(){
+  if(gameState.running) return;
+  initLevel();
+  gameState.running = true; gameState.paused = false;
+  gameState.startTime = performance.now();
+  lastTime = performance.now();
+  requestAnimationFrame(gameLoop);
+  drawScene();
+  document.getElementById('statusText').textContent = 'Em rota (modo gamificado)';
+}
+function resetGame(){
+  initLevel();
+  gameState.running = true; gameState.paused = false; gameState.timeElapsed = 0;
+  lastTime = performance.now();
+  requestAnimationFrame(gameLoop);
+  drawScene();
+  document.getElementById('statusText').textContent = 'Em rota (modo gamificado)';
+}
+function togglePause(){
+  gameState.paused = !gameState.paused;
+  document.getElementById('pauseBtn').textContent = gameState.paused ? 'Retomar' : 'Pausar';
+  if(!gameState.paused && gameState.running) { lastTime = performance.now(); }
+}
+function showHint(){ showToast('Dica: siga a linha amarela para a próxima casa. Use setas ou toque/arraste.'); }
+
+// init when user opens game directly (if clicks useGameBtn)
+initLevel();
+drawScene();
+
+// Expose some functions to window for button hooks
+window.resetGame = resetGame;
+window.togglePause = togglePause;
+window.showHint = showHint;
+window.startGame = startGame;
+
+// If developer wants to auto-launch game when iframe absent: uncomment to auto-start:
+// startGame();
+
+</script>
+</body>
+</html>

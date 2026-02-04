@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho - GYM FIT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        /* CABEÇALHO */
+        .cabecalho-carrinho {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 10px 0;
+        }
+        
+        .voltar-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            margin-right: 20px;
+            transition: color 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .voltar-btn:hover {
+            color: #8B0000;
+        }
+        
+        .titulo-carrinho {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            flex: 1;
+        }
+        
+        .contador-carrinho {
+            background: #8B0000;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* LISTA DE PRODUTOS */
+        .produtos-lista {
+            margin-bottom: 25px;
+        }
+        
+        .produto-item {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 15px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .produto-item:hover {
+            border-color: #333;
+            transform: translateY(-2px);
+        }
+        
+        .produto-imagem {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            background: #2a2a2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        
+        .produto-imagem img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .produto-info {
+            flex: 1;
+        }
+        
+        .produto-nome {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+        
+        .produto-descricao {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        
+        .produto-preco {
+            font-size: 18px;
+            font-weight: 700;
+            color: #8B0000;
+        }
+        
+        .produto-preco-original {
+            font-size: 12px;
+            color: #888;
+            text-decoration: line-through;
+            margin-left: 5px;
+        }
+        
+        .produto-controles {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        
+        .quantidade-controle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #2a2a2a;
+            border-radius: 20px;
+            padding: 5px 12px;
+        }
+        
+        .quantidade-btn {
+            background: none;
+            border: none;
+            color: #8B0000;
+            font-size: 16px;
+            cursor: pointer;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+        
+        .quantidade-btn:hover {
+            background: #333;
+        }
+        
+        .quantidade {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .remover-btn {
+            background: none;
+            border: none;
+            color: #ff4444;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .remover-btn:hover {
+            background: rgba(255, 68, 68, 0.1);
+            transform: scale(1.1);
+        }
+
+        /* RESUMO DO PEDIDO */
+        .resumo-pedido {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .titulo-resumo {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .linha-resumo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        .linha-resumo:last-child {
+            border-bottom: none;
+        }
+        
+        .label {
+            font-size: 14px;
+            color: #ccc;
+        }
+        
+        .valor {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .valor-destaque {
+            font-size: 18px;
+            font-weight: 700;
+            color: #8B0000;
+        }
+        
+        /* CUPOM */
+        .cupom-section {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .cupom-input {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .cupom-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #1a1a1a;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .cupom-input input:focus {
+            outline: none;
+            border-color: #8B0000;
+        }
+        
+        .aplicar-btn {
+            background: #8B0000;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .aplicar-btn:hover {
+            background: #A52A2A;
+        }
+        
+        .mensagem-cupom {
+            font-size: 12px;
+            margin-top: 8px;
+            min-height: 16px;
+            text-align: center;
+        }
+        
+        .mensagem-cupom.sucesso {
+            color: #32CD32;
+        }
+        
+        .mensagem-cupom.erro {
+            color: #ff4444;
+        }
+
+        /* FRETE */
+        .frete-section {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .cep-input {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .cep-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #1a1a1a;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .cep-input input:focus {
+            outline: none;
+            border-color: #8B0000;
+        }
+        
+        .calcular-btn {
+            background: #8B0000;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 15px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .calcular-btn:hover {
+            background: #A52A2A;
+        }
+
+        /* BOTÕES */
+        .botoes-acao {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 25px;
+        }
+        
+        .btn-principal {
+            background: linear-gradient(135deg, #8B0000, #A52A2A);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .btn-principal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 0, 0, 0.4);
+        }
+        
+        .btn-secundario {
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .btn-secundario:hover {
+            background: #444;
+        }
+
+        /* CARRINHO VAZIO */
+        .carrinho-vazio {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+        
+        .carrinho-vazio i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .carrinho-vazio h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #ccc;
+        }
+        
+        .carrinho-vazio p {
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* OFERTAS ESPECIAIS */
+        .ofertas-section {
+            margin-top: 30px;
+        }
+        
+        .titulo-ofertas {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .ofertas-lista {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 10px 0;
+            scrollbar-width: none;
+        }
+        
+        .ofertas-lista::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .oferta-item {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 15px;
+            min-width: 150px;
+            text-align: center;
+            flex-shrink: 0;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+        
+        .oferta-item:hover {
+            border-color: #8B0000;
+            transform: translateY(-2px);
+        }
+        
+        .oferta-imagem {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            background: #2a2a2a;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .oferta-nome {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            line-height: 1.2;
+        }
+        
+        .oferta-preco {
+            font-size: 14px;
+            font-weight: 700;
+            color: #8B0000;
+        }
+
+        /* RESPONSIVIDADE */
+        @media (max-width: 375px) {
+            .produto-item {
+                padding: 15px;
+            }
+            
+            .produto-imagem {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .titulo-carrinho {
+                font-size: 20px;
+            }
+            
+            .cupom-input, .cep-input {
+                flex-direction: column;
+            }
+        }
+
+        /* ANIMAÇÕES */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- CABEÇALHO -->
+        <div class="cabecalho-carrinho">
+            <button class="voltar-btn" onclick="voltarParaCatalogo()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="titulo-carrinho">Meu Carrinho</h1>
+        </div>
+        
+        <!-- LISTA DE PRODUTOS -->
+        <div class="produtos-lista" id="produtosLista">
+            <!-- Produtos serão carregados dinamicamente -->
+        </div>
+        
+        <!-- RESUMO DO PEDIDO -->
+        <div class="resumo-pedido" id="resumoPedido">
+            <h2 class="titulo-resumo">Resumo do Pedido</h2>
+            
+            <!-- CUPOM -->
+            <div class="cupom-section">
+                <div class="cupom-input">
+                    <input type="text" id="cupomInput" placeholder="Digite o código do cupom">
+                    <button class="aplicar-btn" onclick="aplicarCupom()">Aplicar</button>
+                </div>
+                <div class="mensagem-cupom" id="mensagemCupom"></div>
+            </div>
+            
+            <!-- FRETE -->
+            <div class="frete-section">
+                <div class="cep-input">
+                    <input type="text" id="cepInput" placeholder="Digite seu CEP" maxlength="9">
+                    <button class="calcular-btn" onclick="calcularFrete()">Calcular Frete</button>
+                </div>
+            </div>
+            
+            <!-- DETALHES -->
+            <div class="linha-resumo">
+                <span class="label">Subtotal</span>
+                <span class="valor" id="subtotal">R$ 0,00</span>
+            </div>
+            <div class="linha-resumo">
+                <span class="label">Frete</span>
+                <span class="valor" id="frete">R$ 0,00</span>
+            </div>
+            <div class="linha-resumo">
+                <span class="label">Desconto</span>
+                <span class="valor" id="desconto">- R$ 0,00</span>
+            </div>
+            <div class="linha-resumo">
+                <span class="label">Total</span>
+                <span class="valor valor-destaque" id="total">R$ 0,00</span>
+            </div>
+            
+            <!-- BOTÕES -->
+            <div class="botoes-acao">
+                <button class="btn-principal" onclick="finalizarCompra()" id="btnFinalizar">
+                    Finalizar Compra
+                </button>
+                <a href="Catalogo.html" class="btn-secundario">
+                    Continuar Comprando
+                </a>
+            </div>
+        </div>
+
+
+    <script>
+        // Dados do carrinho
+        let carrinho = JSON.parse(localStorage.getItem('carrinho_gymfit')) || [];
+        let cupomAplicado = null;
+        let valorFrete = 0;
+
+        // Cupons disponíveis
+        const cupons = {
+            'GYM10': { desconto: 0.10, descricao: '10% de desconto' },
+            'FIT15': { desconto: 0.15, descricao: '15% de desconto' },
+            'FREEGYM': { freteGratis: true, descricao: 'Frete grátis' },
+            'BOASVINDAS': { desconto: 0.20, descricao: '20% de desconto' }
+        };
+
+        
+
+        // Função para carregar carrinho
+        function carregarCarrinho() {
+            const produtosLista = document.getElementById('produtosLista');
+            const resumoPedido = document.getElementById('resumoPedido');
+            const ofertasSection = document.getElementById('ofertasSection');
+            
+            if (carrinho.length === 0) {
+                produtosLista.innerHTML = `
+                    <div class="carrinho-vazio">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>Seu carrinho está vazio</h3>
+                        <p>Adicione produtos incríveis ao seu carrinho!</p>
+                        <a href="Catalogo.html" class="btn-principal">Continuar Comprando</a>
+                    </div>
+                `;
+                resumoPedido.style.display = 'none';
+                ofertasSection.style.display = 'block';
+                carregarOfertasSugeridas();
+            } else {
+                produtosLista.innerHTML = carrinho.map(produto => `
+                    <div class="produto-item slide-in" data-id="${produto.id}">
+                        <div class="produto-imagem">
+                            <img src="img/${produto.imagem}" alt="${produto.nome}" 
+                                 onerror="this.src='https://via.placeholder.com/80x80/333/fff?text=GYMFIT'">
+                        </div>
+                        <div class="produto-info">
+                            <div class="produto-nome">${produto.nome}</div>
+                            <div class="produto-descricao">${produto.descricao}</div>
+                            <div class="produto-preco">
+                                R$ ${(produto.preco * produto.quantidade).toFixed(2)}
+                                ${produto.precoOriginal ? `<span class="produto-preco-original">R$ ${(produto.precoOriginal * produto.quantidade).toFixed(2)}</span>` : ''}
+                            </div>
+                            <div class="produto-controles">
+                                <div class="quantidade-controle">
+                                    <button class="quantidade-btn" onclick="alterarQuantidade('${produto.id}', -1)">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <span class="quantidade">${produto.quantidade}</span>
+                                    <button class="quantidade-btn" onclick="alterarQuantidade('${produto.id}', 1)">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                                <button class="remover-btn" onclick="removerProduto('${produto.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                resumoPedido.style.display = 'block';
+                ofertasSection.style.display = 'block';
+                carregarOfertasSugeridas();
+            }
+            
+            atualizarResumo();
+            atualizarContador();
+        }
+
+        // Função para carregar ofertas sugeridas
+        function carregarOfertasSugeridas() {
+            const ofertasLista = document.getElementById('ofertasLista');
+            ofertasLista.innerHTML = produtosSugeridos.map(produto => `
+                <div class="oferta-item" onclick="adicionarSugestao('${produto.id}')">
+                    <div class="oferta-imagem">
+                        <img src="img/${produto.imagem}" alt="${produto.nome}"
+                             onerror="this.src='https://via.placeholder.com/60x60/333/fff?text=PROD'">
+                    </div>
+                    <div class="oferta-nome">${produto.nome}</div>
+                    <div class="oferta-preco">R$ ${produto.preco.toFixed(2)}</div>
+                </div>
+            `).join('');
+        }
+
+        // Função para adicionar produto sugerido
+        function adicionarSugestao(id) {
+            const produto = produtosSugeridos.find(p => p.id === id);
+            if (produto) {
+                // Verificar se já está no carrinho
+                const existente = carrinho.find(p => p.id === produto.id);
+                
+                if (existente) {
+                    existente.quantidade += 1;
+                } else {
+                    carrinho.push({
+                        ...produto,
+                        quantidade: 1
+                    });
+                }
+                
+                salvarCarrinho();
+                carregarCarrinho();
+                
+                // Feedback visual
+                const btn = event.target.closest('.oferta-item');
+                btn.classList.add('pulse');
+                setTimeout(() => btn.classList.remove('pulse'), 500);
+            }
+        }
+
+        // Função para alterar quantidade
+        function alterarQuantidade(id, mudanca) {
+            const produto = carrinho.find(p => p.id === id);
+            if (produto) {
+                produto.quantidade += mudanca;
+                
+                if (produto.quantidade <= 0) {
+                    removerProduto(id);
+                } else {
+                    salvarCarrinho();
+                    carregarCarrinho();
+                }
+            }
+        }
+
+        // Função para remover produto
+        function removerProduto(id) {
+            carrinho = carrinho.filter(produto => produto.id !== id);
+            salvarCarrinho();
+            carregarCarrinho();
+        }
+
+        // Função para aplicar cupom
+        function aplicarCupom() {
+            const codigo = document.getElementById('cupomInput').value.trim().toUpperCase();
+            const mensagem = document.getElementById('mensagemCupom');
+            
+            if (cupons[codigo]) {
+                cupomAplicado = { ...cupons[codigo], codigo: codigo };
+                mensagem.textContent = `🎉 Cupom "${codigo}" aplicado! ${cupomAplicado.descricao}`;
+                mensagem.className = 'mensagem-cupom sucesso';
+            } else {
+                cupomAplicado = null;
+                mensagem.textContent = '❌ Cupom inválido ou expirado.';
+                mensagem.className = 'mensagem-cupom erro';
+            }
+            
+            atualizarResumo();
+        }
+
+        // Função para calcular frete
+        function calcularFrete() {
+            const cep = document.getElementById('cepInput').value.replace(/\D/g, '');
+            
+            if (cep.length !== 8) {
+                alert('Por favor, digite um CEP válido com 8 dígitos.');
+                return;
+            }
+            
+            // Simulação de cálculo de frete
+            valorFrete = 15.00; // Valor fixo para demonstração
+            
+            // Em uma aplicação real, você faria uma requisição para uma API de CEP
+            setTimeout(() => {
+                alert(`Frete calculado para CEP ${cep}: R$ ${valorFrete.toFixed(2)}`);
+                atualizarResumo();
+            }, 1000);
+        }
+
+        // Função para atualizar resumo
+        function atualizarResumo() {
+            const subtotal = carrinho.reduce((total, produto) => 
+                total + (produto.preco * produto.quantidade), 0);
+            
+            let desconto = 0;
+            let freteFinal = valorFrete;
+            
+            if (cupomAplicado) {
+                if (cupomAplicado.desconto) {
+                    desconto = subtotal * cupomAplicado.desconto;
+                }
+                if (cupomAplicado.freteGratis) {
+                    freteFinal = 0;
+                }
+            }
+            
+            const total = subtotal + freteFinal - desconto;
+            
+            document.getElementById('subtotal').textContent = `R$ ${subtotal.toFixed(2)}`;
+            document.getElementById('frete').textContent = `R$ ${freteFinal.toFixed(2)}`;
+            document.getElementById('desconto').textContent = `- R$ ${desconto.toFixed(2)}`;
+            document.getElementById('total').textContent = `R$ ${total.toFixed(2)}`;
+            
+            // Habilitar/desabilitar botão finalizar
+            document.getElementById('btnFinalizar').disabled = carrinho.length === 0;
+        }
+
+        // Função para atualizar contador
+        function atualizarContador() {
+            const totalItens = carrinho.reduce((total, produto) => total + produto.quantidade, 0);
+            document.getElementById('contadorCarrinho').textContent = totalItens;
+        }
+
+        // Função para salvar carrinho
+        function salvarCarrinho() {
+            localStorage.setItem('carrinho_gymfit', JSON.stringify(carrinho));
+        }
+
+        // Função para finalizar compra
+        function finalizarCompra() {
+            if (carrinho.length === 0) {
+                alert('Seu carrinho está vazio!');
+                return;
+            }
+            
+            // Calcular totais finais
+            const subtotal = carrinho.reduce((total, produto) => 
+                total + (produto.preco * produto.quantidade), 0);
+            
+            let desconto = 0;
+            let freteFinal = valorFrete;
+            
+            if (cupomAplicado) {
+                if (cupomAplicado.desconto) {
+                    desconto = subtotal * cupomAplicado.desconto;
+                }
+                if (cupomAplicado.freteGratis) {
+                    freteFinal = 0;
+                }
+            }
+            
+            const total = subtotal + freteFinal - desconto;
+            
+            // Salvar dados da compra
+            const dadosCompra = {
+                produtos: carrinho,
+                subtotal: subtotal,
+                frete: freteFinal,
+                desconto: desconto,
+                valorTotal: total,
+                cupomAplicado: cupomAplicado,
+                data: new Date().toISOString()
+            };
+            
+            localStorage.setItem('dados_compra_gymfit', JSON.stringify(dadosCompra));
+            
+            // Redirecionar para opções de pagamento
+            window.location.href = 'opcoes-pagamento.html';
+        }
+
+        // Função para voltar ao catálogo
+        function voltarParaCatalogo() {
+            window.location.href = 'Catalogo.html';
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarCarrinho();
+            
+            // Formatar CEP
+            document.getElementById('cepInput').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 5) {
+                    value = value.substring(0, 5) + '-' + value.substring(5, 8);
+                }
+                e.target.value = value;
+            });
+            
+            // Permitir Enter no cupom
+            document.getElementById('cupomInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    aplicarCupom();
+                }
+            });
+            
+            // Permitir Enter no CEP
+            document.getElementById('cepInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    calcularFrete();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

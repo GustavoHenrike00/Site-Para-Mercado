@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/Style-Cadastro.css">
+    <title>Cadastro - GYM FIT</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img class="logo" src="img/logo.png" alt="GYM FIT Logo">
+        </div>
+        
+        <div class="register-card">
+            <h2 class="register-title" style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">Criar Conta</h2>
+            
+            <form id="registerForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="name">Nome</label>
+                        <input type="text" id="name" class="form-input" placeholder="Seu nome" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="age">Idade</label>
+                        <input type="number" id="age" class="form-input" placeholder="Sua idade" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" id="email" class="form-input" placeholder="Seu e-mail" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="phone">Celular</label>
+                    <input type="tel" id="phone" class="form-input" placeholder="Seu telefone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="senha">Senha</label>
+                    <div class="password-container">
+                        <input type="password" id="senha" class="form-input" placeholder="Crie uma Senha" required>
+                        <button type="button" class="toggle-password"><i class="fas fa-eye-slash"></i></button>
+                    </div>
+                </div>
+                
+                <!-- Seção de Endereço -->
+                <div class="form-group">
+                    <label class="form-label" for="cep">CEP</label>
+                    <div class="cep-container">
+                        <input type="text" id="cep" class="form-input" placeholder="00000-000" maxlength="9" required>
+                        <div class="loading" id="cepLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                    </div>
+                </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="logradouro">Endereço - Logradouro</label>
+                        <input type="text" id="logradouro" class="form-input" placeholder="Rua, Avenida, etc." disabled>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="bairro">Bairro</label>
+                            <input type="text" id="bairro" class="form-input" placeholder="Bairro" disabled>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="cidade">Cidade</label>
+                            <input type="text" id="cidade" class="form-input" placeholder="Cidade" disabled>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="estado">Estado</label>
+                            <input type="text" id="estado" class="form-input" placeholder="UF" disabled>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="N-casa">N° Da Casa</label>
+                            <input type="number" id="N-casa" class="form-input" placeholder="Número" required>
+                        </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="complemento">Complemento</label>
+                        <input type="text" id="complemento" class="form-input" placeholder="Apartamento, Bloco, etc.">
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">Li e aceito os termos de uso e política de privacidade</label>
+                </div>
+                
+                <button type="submit" class="btn-register">Criar Cadastro</button>
+
+                <div class="login-link">
+                    Já Tem uma Conta? <a href="Login.html" class="link">Fazer Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="js/Script-Cadastro.js"></script>
+</body>
+</html>

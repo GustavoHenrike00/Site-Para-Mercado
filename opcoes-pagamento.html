@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opções de Pagamento - GYM FIT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .cabecalho-pagamento {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 10px 0;
+        }
+        
+        .voltar-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            margin-right: 20px;
+            transition: color 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .voltar-btn:hover {
+            color: #8B0000;
+        }
+        
+        .titulo-pagamento {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            flex: 1;
+        }
+        
+        .opcoes-pagamento {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .opcao-item {
+            background: #2a2a2a;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .opcao-item:hover, .opcao-item:active {
+            border-color: #8B0000;
+            transform: translateY(-2px);
+        }
+        
+        .opcao-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .opcao-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: #8B0000;
+            flex-shrink: 0;
+        }
+        
+        .opcao-info {
+            flex: 1;
+        }
+        
+        .opcao-nome {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .opcao-desc {
+            font-size: 14px;
+            color: #888;
+        }
+        
+        .opcao-seta {
+            color: #888;
+            font-size: 16px;
+        }
+        
+        .total-pagamento {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .label-total {
+            font-size: 16px;
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+        
+        .valor-total {
+            font-size: 28px;
+            font-weight: 700;
+            color: #8B0000;
+        }
+        
+        .botoes-pagamento {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn-pagamento {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-cancelar {
+            background: #333;
+            color: white;
+        }
+        
+        .btn-cancelar:hover, .btn-cancelar:active {
+            background: #444;
+        }
+
+        /* Badge de método popular */
+        .badge-popular {
+            background: #8B0000;
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+
+        /* Responsividade para telas muito pequenas */
+        @media (max-width: 375px) {
+            body {
+                padding: 15px;
+            }
+            
+            .titulo-pagamento {
+                font-size: 20px;
+            }
+            
+            .opcao-item {
+                padding: 12px;
+            }
+            
+            .opcao-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+            
+            .opcao-nome {
+                font-size: 15px;
+            }
+            
+            .valor-total {
+                font-size: 24px;
+            }
+        }
+
+        /* Animação de loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            font-size: 40px;
+            color: #8B0000;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cabecalho-pagamento">
+            <button class="voltar-btn" onclick="voltarParaCarrinho()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="titulo-pagamento">Opções De Pagamento</h1>
+        </div>
+        
+        <div class="opcoes-pagamento">
+            <div class="opcao-item" onclick="selecionarPagamento('pix')">
+                <div class="opcao-icon">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <div class="opcao-info">
+                    <div class="opcao-nome">
+                        PIX 
+                        <span class="badge-popular">Popular</span>
+                    </div>
+                    <div class="opcao-desc">Pagamento instantâneo - 5% de desconto</div>
+                </div>
+                <div class="opcao-seta">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            
+            <div class="opcao-item" onclick="selecionarPagamento('cartao')">
+                <div class="opcao-icon">
+                    <i class="far fa-credit-card"></i>
+                </div>
+                <div class="opcao-info">
+                    <div class="opcao-nome">Cartão de Crédito/Débito</div>
+                    <div class="opcao-desc">Parcelamento em até 12x</div>
+                </div>
+                <div class="opcao-seta">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            
+            <div class="opcao-item" onclick="selecionarPagamento('digital')">
+                <div class="opcao-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <div class="opcao-info">
+                    <div class="opcao-nome">Pagamento Digital</div>
+                    <div class="opcao-desc">Apple Pay, Google Pay</div>
+                </div>
+                <div class="opcao-seta">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            
+            <div class="opcao-item" onclick="selecionarPagamento('banco')">
+                <div class="opcao-icon">
+                    <i class="fas fa-university"></i>
+                </div>
+                <div class="opcao-info">
+                    <div class="opcao-nome">Bancos Digitais</div>
+                    <div class="opcao-desc">Nubank, Inter, PicPay</div>
+                </div>
+                <div class="opcao-seta">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            
+            <div class="opcao-item" onclick="selecionarPagamento('boleto')">
+                <div class="opcao-icon">
+                    <i class="fas fa-barcode"></i>
+                </div>
+                <div class="opcao-info">
+                    <div class="opcao-nome">Boleto Bancário</div>
+                    <div class="opcao-desc">Pagamento em até 3 dias</div>
+                </div>
+                <div class="opcao-seta">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="total-pagamento">
+            <div class="label-total">Total a pagar</div>
+            <div class="valor-total" id="valorTotal">R$ 0,00</div>
+            <div style="font-size: 12px; color: #888; margin-top: 8px;">
+                Frete e descontos já aplicados
+            </div>
+        </div>
+        
+        <div class="botoes-pagamento">
+            <button class="btn-pagamento btn-cancelar" onclick="cancelarPagamento()">
+                Cancelar
+            </button>
+        </div>
+
+        <!-- Loading para transições -->
+        <div class="loading" id="loading">
+            <div class="spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <p>Redirecionando...</p>
+        </div>
+    </div>
+
+    <script>
+        // Função para carregar valor total
+        function carregarValorTotal() {
+    const dadosCompra = JSON.parse(localStorage.getItem('dados_compra_gymfit'));
+    
+    if (dadosCompra && dadosCompra.valorTotal) {
+        document.getElementById('valorTotal').textContent = `R$ ${dadosCompra.valorTotal.toFixed(2)}`;
+    } else {
+        // Fallback: calcular do carrinho
+        const carrinho = JSON.parse(localStorage.getItem('carrinho_gymfit')) || [];
+        const valorProdutos = carrinho.reduce((total, produto) => total + (produto.preco * produto.quantidade), 0);
+        const frete = 15.00;
+        const desconto = 0;
+        const valorTotal = valorProdutos + frete - desconto;
+        document.getElementById('valorTotal').textContent = `R$ ${valorTotal.toFixed(2)}`;
+    }
+}
+
+        // Função para selecionar método de pagamento
+        function selecionarPagamento(metodo) {
+            // Mostrar loading
+            document.getElementById('loading').style.display = 'block';
+            
+            // Salvar método escolhido
+            const dadosCompra = JSON.parse(localStorage.getItem('dados_compra_gymfit')) || {};
+            dadosCompra.metodoPagamento = metodo;
+            localStorage.setItem('dados_compra_gymfit', JSON.stringify(dadosCompra));
+            
+            // Redirecionar para a página correspondente
+            setTimeout(() => {
+                switch(metodo) {
+                    case 'pix':
+                        window.location.href = 'pix-pagamento.html';
+                        break;
+                    case 'cartao':
+                        window.location.href = 'cartao-pagamento.html';
+                        break;
+                    case 'digital':
+                        window.location.href = 'Apple Pay.html';
+                        break;
+                    case 'banco':
+                        window.location.href = 'Pagamento-bancodigital.html';
+                        break;
+                    case 'boleto':
+                        window.location.href = 'boleto-pagamento.html';
+                        break;
+                    default:
+                        window.location.href = 'cartao-pagamento.html';
+                }
+            }, 1000);
+        }
+
+        function voltarParaCarrinho() {
+            window.location.href = 'Carrinho.html';
+        }
+
+        function cancelarPagamento() {
+            if (confirm('Deseja cancelar o pagamento?')) {
+                window.location.href = 'Carrinho.html';
+            }
+        }
+
+        // Adicionar efeitos de interação
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarValorTotal();
+            
+            // Adicionar feedback tátil aos botões
+            const opcoes = document.querySelectorAll('.opcao-item');
+            opcoes.forEach(opcao => {
+                opcao.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                
+                opcao.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                });
+            });
+        });
+
+        // Prevenir comportamento padrão em mobile
+        document.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+    </script>
+</body>
+</html>

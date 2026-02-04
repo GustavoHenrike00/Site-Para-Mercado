@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento com Cartão - GYM FIT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            color: white;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        /* ======== CABEÇALHO ======== */
+        .cabecalho-pagamento {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .voltar-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            margin-right: 20px;
+            transition: color 0.3s ease;
+        }
+        
+        .voltar-btn:hover {
+            color: #8B0000;
+        }
+        
+        .titulo-pagamento {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        /* ======== FORMULÁRIO ======== */
+        .formulario-cartao {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .grupo-input {
+            margin-bottom: 20px;
+        }
+        
+        .grupo-input label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .grupo-input input,
+        .grupo-input select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #2a2a2a;
+            color: white;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .grupo-input input:focus,
+        .grupo-input select:focus {
+            outline: none;
+            border-color: #8B0000;
+        }
+        
+        .grupo-input.invalido input {
+            border-color: #ff4444;
+        }
+        
+        .linha-inputs {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .linha-inputs .grupo-input {
+            flex: 1;
+        }
+        
+        /* Bandeira do cartão */
+        .bandeira-cartao {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        
+        .bandeira-icon {
+            width: 40px;
+            height: 25px;
+            background: #333;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #888;
+        }
+        
+        /* Parcelamento */
+        .info-parcelas {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .parcela-info {
+            font-size: 14px;
+            color: #ccc;
+            margin-bottom: 5px;
+        }
+        
+        .valor-parcela {
+            font-size: 18px;
+            font-weight: 600;
+            color: #8B0000;
+        }
+        
+        /* Checkbox */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 25px 0;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .checkbox-group label {
+            color: #ccc;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        /* ======== TOTAL ======== */
+        .total-pagamento {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .label-total {
+            font-size: 16px;
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+        
+        .valor-total {
+            font-size: 28px;
+            font-weight: 700;
+            color: #8B0000;
+        }
+        
+        /* ======== BOTÕES ======== */
+        .botoes-pagamento {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn-pagamento {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-cancelar {
+            background: #333;
+            color: white;
+        }
+        
+        .btn-cancelar:hover {
+            background: #444;
+        }
+        
+        .btn-pagar {
+            background: linear-gradient(135deg, #8B0000, #A52A2A);
+            color: white;
+        }
+        
+        .btn-pagar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 0, 0, 0.4);
+        }
+        
+        .btn-pagar:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Mensagens de erro */
+        .mensagem-erro {
+            color: #ff4444;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- CABEÇALHO -->
+        <div class="cabecalho-pagamento">
+            <button class="voltar-btn" onclick="voltarParaOpcoes()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="titulo-pagamento">Cartão de Crédito/Débito</h1>
+        </div>
+        
+        <!-- FORMULÁRIO -->
+        <div class="formulario-cartao">
+            <!-- Número do Cartão -->
+            <div class="grupo-input" id="grupoNumero">
+                <label for="numeroCartao">Número do Cartão</label>
+                <input type="text" id="numeroCartao" placeholder="0000 0000 0000 0000" maxlength="19">
+                <div class="bandeira-cartao" id="bandeiraCartao">
+                    <div class="bandeira-icon" id="bandeiraIcon">?</div>
+                    <span id="nomeBandeira">Bandeira</span>
+                </div>
+                <div class="mensagem-erro" id="erroNumero">Número do cartão inválido</div>
+            </div>
+            
+            <!-- Nome no Cartão -->
+            <div class="grupo-input" id="grupoNome">
+                <label for="nomeCartao">Nome no Cartão</label>
+                <input type="text" id="nomeCartao" placeholder="Como está no cartão">
+                <div class="mensagem-erro" id="erroNome">Nome é obrigatório</div>
+            </div>
+            
+            <!-- Validade e CVV -->
+            <div class="linha-inputs">
+                <div class="grupo-input" id="grupoValidade">
+                    <label for="validadeCartao">Validade</label>
+                    <input type="text" id="validadeCartao" placeholder="MM/AA" maxlength="5">
+                    <div class="mensagem-erro" id="erroValidade">Data inválida</div>
+                </div>
+                
+                <div class="grupo-input" id="grupoCVV">
+                    <label for="cvvCartao">CVV</label>
+                    <input type="text" id="cvvCartao" placeholder="000" maxlength="3">
+                    <div class="mensagem-erro" id="erroCVV">CVV inválido</div>
+                </div>
+            </div>
+            
+            <!-- Tipo de Cartão -->
+            <div class="grupo-input">
+                <label for="tipoCartao">Tipo do Cartão</label>
+                <select id="tipoCartao">
+                    <option value="credito">Cartão de Crédito</option>
+                    <option value="debito">Cartão de Débito</option>
+                </select>
+            </div>
+            
+            <!-- Parcelamento (só aparece para crédito) -->
+            <div class="grupo-input" id="grupoParcelas" style="display: none;">
+                <label for="parcelas">Parcelas</label>
+                <select id="parcelas">
+                    <option value="1">1x</option>
+                    <option value="2">2x</option>
+                    <option value="3">3x</option>
+                    <option value="4">4x</option>
+                    <option value="5">5x</option>
+                    <option value="6">6x</option>
+                    <option value="7">7x</option>
+                    <option value="8">8x</option>
+                    <option value="9">9x</option>
+                    <option value="10">10x</option>
+                    <option value="11">11x</option>
+                    <option value="12">12x</option>
+                </select>
+                
+                <div class="info-parcelas" id="infoParcelas">
+                    <div class="parcela-info" id="textoParcelas">1x Sem Juros</div>
+                    <div class="valor-parcela" id="valorParcela">R$ 0,00</div>
+                </div>
+            </div>
+            
+            <!-- Salvar Cartão -->
+            <div class="checkbox-group">
+                <input type="checkbox" id="salvarCartao">
+                <label for="salvarCartao">Deseja salvar as informações desse cartão</label>
+            </div>
+        </div>
+        
+        <!-- TOTAL -->
+        <div class="total-pagamento">
+            <div class="label-total">Total a pagar</div>
+            <div class="valor-total" id="valorTotal">R$ 0,00</div>
+        </div>
+        
+        <!-- BOTÕES -->
+        <div class="botoes-pagamento">
+            <button class="btn-pagamento btn-cancelar" onclick="cancelarPagamento()">
+                Cancelar Pagamento
+            </button>
+            <button class="btn-pagamento btn-pagar" id="btnPagar" onclick="processarPagamento()">
+                Pagar Agora
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let valorTotal = 0;
+        let tentativasCancelar = 0;
+        let cartaoValido = false;
+
+        // Carregar valor total
+        function carregarValorTotal() {
+            const carrinho = JSON.parse(localStorage.getItem('carrinho_gymfit')) || [];
+            const valorProdutos = carrinho.reduce((total, produto) => total + (produto.preco * produto.quantidade), 0);
+            
+            // Simular frete e descontos
+            const frete = 15.00;
+            const desconto = 0;
+            
+            valorTotal = valorProdutos + frete - desconto;
+            document.getElementById('valorTotal').textContent = `R$ ${valorTotal.toFixed(2)}`;
+            atualizarParcelas();
+        }
+
+        // Detectar bandeira do cartão
+        function detectarBandeira(numero) {
+            const bandeiras = {
+                '4': { nome: 'Visa', cor: '#1a1f71' },
+                '5': { nome: 'Mastercard', cor: '#eb001b' },
+                '3': { nome: 'American Express', cor: '#2e77bc' },
+                '6': { nome: 'Discover', cor: '#ff6000' }
+            };
+            
+            const primeiroDigito = numero.charAt(0);
+            return bandeiras[primeiroDigito] || { nome: 'Cartão', cor: '#333' };
+        }
+
+        // Validar número do cartão
+        function validarNumeroCartao(numero) {
+            const numeroLimpo = numero.replace(/\s/g, '');
+            return numeroLimpo.length >= 13 && numeroLimpo.length <= 19 && /^\d+$/.test(numeroLimpo);
+        }
+
+        // Validar data
+        function validarData(data) {
+            if (!/^\d{2}\/\d{2}$/.test(data)) return false;
+            
+            const [mes, ano] = data.split('/').map(Number);
+            const agora = new Date();
+            const anoAtual = agora.getFullYear() % 100;
+            const mesAtual = agora.getMonth() + 1;
+            
+            if (mes < 1 || mes > 12) return false;
+            if (ano < anoAtual || (ano === anoAtual && mes < mesAtual)) return false;
+            
+            return true;
+        }
+
+        // Validar CVV
+        function validarCVV(cvv) {
+            return /^\d{3,4}$/.test(cvv);
+        }
+
+        // Validar nome
+        function validarNome(nome) {
+            return nome.trim().length >= 3;
+        }
+
+        // Atualizar parcelas
+        function atualizarParcelas() {
+            const parcelas = parseInt(document.getElementById('parcelas').value);
+            const valorParcela = valorTotal / parcelas;
+            
+            document.getElementById('textoParcelas').textContent = `${parcelas}x Sem Juros`;
+            document.getElementById('valorParcela').textContent = `R$ ${valorParcela.toFixed(2)}`;
+        }
+
+        // Mostrar/ocultar erros
+        function mostrarErro(grupoId, mostrar) {
+            const grupo = document.getElementById(grupoId);
+            const erro = document.getElementById(`erro${grupoId.replace('grupo', '')}`);
+            
+            if (mostrar) {
+                grupo.classList.add('invalido');
+                erro.style.display = 'block';
+            } else {
+                grupo.classList.remove('invalido');
+                erro.style.display = 'none';
+            }
+        }
+
+        // Validar formulário completo
+        function validarFormulario() {
+            const numero = document.getElementById('numeroCartao').value;
+            const nome = document.getElementById('nomeCartao').value;
+            const data = document.getElementById('validadeCartao').value;
+            const cvv = document.getElementById('cvvCartao').value;
+            const tipo = document.getElementById('tipoCartao').value;
+            
+            const numeroValido = validarNumeroCartao(numero);
+            const nomeValido = validarNome(nome);
+            const dataValida = validarData(data);
+            const cvvValido = validarCVV(cvv);
+            
+            mostrarErro('grupoNumero', !numeroValido);
+            mostrarErro('grupoNome', !nomeValido);
+            mostrarErro('grupoValidade', !dataValida);
+            mostrarErro('grupoCVV', !cvvValido);
+            
+            return numeroValido && nomeValido && dataValida && cvvValido;
+        }
+
+        // Processar pagamento
+        function processarPagamento() {
+            if (!validarFormulario()) {
+                alert('Por favor, corrija os erros no formulário.');
+                return;
+            }
+            
+            // Salvar cartão se solicitado
+            if (document.getElementById('salvarCartao').checked) {
+                salvarCartao();
+            }
+            
+            // Redirecionar para confirmação
+            window.location.href = 'confirmacao-pagamento.html';
+        }
+
+        // Salvar cartão
+        function salvarCartao() {
+            const cartoesSalvos = JSON.parse(localStorage.getItem('cartoes_salvos')) || [];
+            const numero = document.getElementById('numeroCartao').value;
+            
+            // Salvar apenas os últimos 4 dígitos
+            const ultimos4 = numero.slice(-4);
+            
+            const cartao = {
+                id: Date.now().toString(),
+                ultimos4: ultimos4,
+                nome: document.getElementById('nomeCartao').value,
+                bandeira: document.getElementById('nomeBandeira').textContent,
+                tipo: document.getElementById('tipoCartao').value
+            };
+            
+            cartoesSalvos.push(cartao);
+            localStorage.setItem('cartoes_salvos', JSON.stringify(cartoesSalvos));
+        }
+
+        // Voltar para opções
+        function voltarParaOpcoes() {
+            window.location.href = 'opcoes-pagamento.html';
+        }
+
+        // Cancelar pagamento
+        function cancelarPagamento() {
+            const formularioVazio = !document.getElementById('numeroCartao').value &&
+                                  !document.getElementById('nomeCartao').value &&
+                                  !document.getElementById('validadeCartao').value &&
+                                  !document.getElementById('cvvCartao').value;
+            
+            if (tentativasCancelar === 0 || !formularioVazio) {
+                // Primeiro clique ou formulário não vazio - limpar formulário
+                document.getElementById('numeroCartao').value = '';
+                document.getElementById('nomeCartao').value = '';
+                document.getElementById('validadeCartao').value = '';
+                document.getElementById('cvvCartao').value = '';
+                document.getElementById('salvarCartao').checked = false;
+                
+                tentativasCancelar++;
+                alert('Formulário limpo. Clique novamente para voltar às opções de pagamento.');
+            } else {
+                // Segundo clique com formulário vazio - voltar
+                window.location.href = 'opcoes-pagamento.html';
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarValorTotal();
+            
+            // Event listeners
+            document.getElementById('numeroCartao').addEventListener('input', function(e) {
+                // Formatar número do cartão
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(\d{4})/g, '$1 ').trim();
+                e.target.value = value.substring(0, 19);
+                
+                // Detectar bandeira
+                const bandeira = detectarBandeira(value);
+                document.getElementById('bandeiraIcon').textContent = bandeira.nome.charAt(0);
+                document.getElementById('bandeiraIcon').style.background = bandeira.cor;
+                document.getElementById('nomeBandeira').textContent = bandeira.nome;
+                
+                validarFormulario();
+            });
+            
+            document.getElementById('validadeCartao').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                }
+                e.target.value = value.substring(0, 5);
+                validarFormulario();
+            });
+            
+            document.getElementById('cvvCartao').addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+                validarFormulario();
+            });
+            
+            document.getElementById('nomeCartao').addEventListener('input', function() {
+                validarFormulario();
+            });
+            
+            document.getElementById('tipoCartao').addEventListener('change', function() {
+                const isCredito = this.value === 'credito';
+                document.getElementById('grupoParcelas').style.display = isCredito ? 'block' : 'none';
+            });
+            
+            document.getElementById('parcelas').addEventListener('change', atualizarParcelas);
+        });
+
+    function carregarValorTotal() {
+    const dadosCompra = JSON.parse(localStorage.getItem('dados_compra_gymfit'));
+    
+    if (dadosCompra && dadosCompra.valorTotal) {
+        valorTotal = dadosCompra.valorTotal;
+        document.getElementById('valorTotal').textContent = `R$ ${valorTotal.toFixed(2)}`;
+    } else {
+        // Fallback - calcular do carrinho
+        const carrinho = JSON.parse(localStorage.getItem('carrinho_gymfit')) || [];
+        const valorProdutos = carrinho.reduce((total, produto) => total + (produto.preco * produto.quantidade), 0);
+        const frete = 15.00;
+        const desconto = 0;
+        valorTotal = valorProdutos + frete - desconto;
+        document.getElementById('valorTotal').textContent = `R$ ${valorTotal.toFixed(2)}`;
+    }
+    
+    atualizarParcelas();
+}
+    </script>
+</body>
+</html>

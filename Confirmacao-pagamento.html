@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compra Concluída - GYM FIT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        /* CABEÇALHO */
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: #8B0000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+        
+        .titulo-principal {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8B0000, #FF6B6B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .subtitulo {
+            font-size: 16px;
+            color: #ccc;
+            line-height: 1.4;
+        }
+
+        /* CARD DE CONFIRMAÇÃO */
+        .card-confirmacao {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 30px 25px;
+            margin-bottom: 25px;
+            text-align: center;
+            border: 1px solid #333;
+            box-shadow: 0 8px 32px rgba(139, 0, 0, 0.1);
+        }
+        
+        .icone-sucesso {
+            font-size: 80px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .icone-sucesso i {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 4px 12px rgba(76, 175, 80, 0.3));
+        }
+        
+        .badge-sucesso {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        
+        .mensagem-destaque {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+        
+        .mensagem-secundaria {
+            color: #ccc;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        /* DETALHES DO PEDIDO */
+        .detalhes-pedido {
+            background: #2a2a2a;
+            border-radius: 16px;
+            padding: 25px;
+            margin: 25px 0;
+            text-align: left;
+        }
+        
+        .titulo-detalhes {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .linha-detalhe {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin: 16px 0;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .linha-detalhe:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .label {
+            font-size: 14px;
+            color: #ccc;
+            flex: 1;
+        }
+        
+        .valor {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            text-align: right;
+            flex: 1;
+        }
+        
+        .numero-pedido {
+            font-size: 18px;
+            font-weight: 800;
+            color: #8B0000;
+            background: rgba(139, 0, 0, 0.1);
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(139, 0, 0, 0.3);
+        }
+        
+        .status-aprovado {
+            color: #4CAF50;
+            font-weight: 700;
+            background: rgba(76, 175, 80, 0.1);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        /* PRODUTOS COMPRADOS */
+        .produtos-comprados {
+            background: #2a2a2a;
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        
+        .produto-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        .produto-item:last-child {
+            border-bottom: none;
+        }
+        
+        .produto-imagem {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background: #3a3a3a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        
+        .produto-imagem img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .produto-info {
+            flex: 1;
+        }
+        
+        .produto-nome {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 4px;
+        }
+        
+        .produto-detalhes {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .produto-preco {
+            font-size: 14px;
+            font-weight: 700;
+            color: #8B0000;
+            text-align: right;
+        }
+
+        /* INFORMAÇÕES DE ENTREGA */
+        .info-entrega {
+            background: rgba(139, 0, 0, 0.1);
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .tempo-entrega {
+            font-size: 16px;
+            font-weight: 700;
+            color: #8B0000;
+            margin-bottom: 8px;
+        }
+        
+        .endereco-entrega {
+            font-size: 14px;
+            color: #ccc;
+            line-height: 1.4;
+        }
+
+        /* BOTÕES DE AÇÃO */
+        .botoes-acao {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 30px;
+        }
+        
+        .btn-acao {
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-principal {
+            background: linear-gradient(135deg, #8B0000, #A52A2A);
+            color: white;
+        }
+        
+        .btn-principal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 0, 0, 0.4);
+        }
+        
+        .btn-secundario {
+            background: #333;
+            color: white;
+            border: 1px solid #444;
+        }
+        
+        .btn-secundario:hover {
+            background: #444;
+            transform: translateY(-1px);
+        }
+
+        /* RODAPÉ */
+        .rodape {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px 0;
+            border-top: 1px solid #333;
+        }
+        
+        .contato {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 15px;
+        }
+        
+        .redes-sociais {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .rede-social {
+            width: 40px;
+            height: 40px;
+            background: #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .rede-social:hover {
+            background: #8B0000;
+            transform: translateY(-2px);
+        }
+
+        /* RESPONSIVIDADE AVANÇADA */
+        
+        /* Celulares muito pequenos (até 320px) */
+        @media (max-width: 320px) {
+            body {
+                padding: 15px;
+            }
+            
+            .container {
+                padding: 0 5px;
+            }
+            
+            .titulo-principal {
+                font-size: 24px;
+            }
+            
+            .card-confirmacao {
+                padding: 20px 15px;
+            }
+            
+            .icone-sucesso {
+                font-size: 60px;
+            }
+            
+            .botoes-acao {
+                grid-template-columns: 1fr;
+            }
+            
+            .detalhes-pedido, .produtos-comprados {
+                padding: 20px 15px;
+            }
+        }
+        
+        /* Celulares pequenos (321px - 375px) */
+        @media (min-width: 321px) and (max-width: 375px) {
+            .titulo-principal {
+                font-size: 26px;
+            }
+            
+            .card-confirmacao {
+                padding: 25px 20px;
+            }
+            
+            .botoes-acao {
+                gap: 10px;
+            }
+            
+            .btn-acao {
+                padding: 14px;
+                font-size: 14px;
+            }
+        }
+        
+        /* Celulares médios (376px - 425px) */
+        @media (min-width: 376px) and (max-width: 425px) {
+            .container {
+                max-width: 400px;
+            }
+        }
+        
+        /* Celulares grandes (426px - 768px) */
+        @media (min-width: 426px) and (max-width: 768px) {
+            .container {
+                max-width: 450px;
+            }
+            
+            .card-confirmacao {
+                padding: 35px 30px;
+            }
+            
+            .icone-sucesso {
+                font-size: 90px;
+            }
+            
+            .mensagem-destaque {
+                font-size: 22px;
+            }
+        }
+        
+        /* Tablets (769px+) - mantém design mobile */
+        @media (min-width: 769px) {
+            .container {
+                max-width: 500px;
+            }
+        }
+
+        /* Modo paisagem */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .container {
+                justify-content: flex-start;
+                padding: 20px 0;
+            }
+            
+            .card-confirmacao {
+                margin-bottom: 15px;
+            }
+            
+            .detalhes-pedido, .produtos-comprados {
+                margin: 15px 0;
+                padding: 20px;
+            }
+        }
+
+        /* ANIMAÇÕES */
+        @keyframes confetti {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        .slide-in {
+            animation: slideIn 0.6s ease-out;
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #8B0000;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ESTADOS ESPECIAIS */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .destaque {
+            background: rgba(139, 0, 0, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 4px solid #8B0000;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Confetti elements will be added by JavaScript -->
+    
+    <div class="container">
+        <!-- CABEÇALHO -->
+        <div class="cabecalho slide-in">
+
+            <h1 class="titulo-principal">Compra Concluída!</h1>
+            <p class="subtitulo">Seu pedido foi processado com sucesso</p>
+        </div>
+        
+        <!-- CARD DE CONFIRMAÇÃO -->
+        <div class="card-confirmacao slide-in">
+            <div class="icone-sucesso">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            
+            <div class="badge-sucesso">
+                <i class="fas fa-check"></i> PAGAMENTO APROVADO
+            </div>
+            
+            <h2 class="mensagem-destaque">Obrigado pela sua compra!</h2>
+            <p class="mensagem-secundaria">
+                Seu pedido foi confirmado e está sendo processado. 
+                Você receberá um e-mail com todos os detalhes.
+            </p>
+        </div>
+        
+        <!-- DETALHES DO PEDIDO -->
+        <div class="detalhes-pedido slide-in">
+            <h3 class="titulo-detalhes">
+                <i class="fas fa-receipt"></i> Detalhes do Pedido
+            </h3>
+            
+            <div class="linha-detalhe">
+                <span class="label">Número do Pedido:</span>
+                <span class="valor numero-pedido" id="numeroPedido">#GYMFIT000001</span>
+            </div>
+            
+            <div class="linha-detalhe">
+                <span class="label">Data do Pedido:</span>
+                <span class="valor" id="dataPedido">Carregando...</span>
+            </div>
+            
+            <div class="linha-detalhe">
+                <span class="label">Método de Pagamento:</span>
+                <span class="valor" id="metodoPagamento">Carregando...</span>
+            </div>
+            
+            <div class="linha-detalhe">
+                <span class="label">Status do Pagamento:</span>
+                <span class="valor status-aprovado" id="statusPagamento">
+                    <i class="fas fa-check"></i> Aprovado
+                </span>
+            </div>
+            
+            <div class="linha-detalhe">
+                <span class="label">Valor Total:</span>
+                <span class="valor" id="valorTotal" style="font-size: 16px; color: #8B0000; font-weight: 800;">R$ 0,00</span>
+            </div>
+        </div>
+        
+        <!-- PRODUTOS COMPRADOS -->
+        <div class="produtos-comprados slide-in" id="produtosComprados">
+            <h3 class="titulo-detalhes">
+                <i class="fas fa-box"></i> Produtos Comprados
+            </h3>
+            <!-- Produtos serão carregados via JavaScript -->
+        </div>
+        
+        <!-- INFORMAÇÕES DE ENTREGA -->
+        <div class="info-entrega slide-in">
+            <div class="tempo-entrega">
+                <i class="fas fa-shipping-fast"></i> Previsão de Entrega: 3-5 dias úteis
+            </div>
+            <div class="endereco-entrega" id="enderecoEntrega">
+                Carregando endereço de entrega...
+            </div>
+        </div>
+        
+        <!-- BOTÕES DE AÇÃO -->
+        <div class="botoes-acao slide-in">
+            <a href="Catalogo.html" class="btn-acao btn-principal">
+                <i class="fas fa-shopping-bag"></i> Continuar Comprando
+            </a>
+            <button class="btn-acao btn-secundario" onclick="rastrearPedido()">
+                <i class="fas fa-map-marker-alt"></i> Acompanhar Pedido
+            </button>
+        </div>
+        
+        <!-- RODAPÉ -->
+        <div class="rodape slide-in">
+            <div class="contato">
+                <i class="fas fa-headset"></i> Dúvidas? contato@gymfit.com
+            </div>
+            <div class="redes-sociais">
+                <a href="#" class="rede-social">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" class="rede-social">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="#" class="rede-social">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+            </div>
+            <div style="font-size: 12px; color: #666;">
+                GYM FIT &copy; 2024 - Todos os direitos reservados
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para criar efeito de confetti
+        function criarConfetti() {
+            const colors = ['#8B0000', '#A52A2A', '#4CAF50', '#FF6B6B', '#FFD700'];
+            const container = document.body;
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animation = `confetti ${Math.random() * 3 + 2}s linear forwards`;
+                confetti.style.animationDelay = Math.random() * 1 + 's';
+                container.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+
+        // Função para carregar dados da compra
+        function carregarDadosCompra() {
+            const dadosCompra = JSON.parse(localStorage.getItem('dados_compra_gymfit'));
+            
+            if (dadosCompra) {
+                // Número do pedido único
+                const numeroPedido = `#GYM${Date.now().toString().slice(-6)}`;
+                document.getElementById('numeroPedido').textContent = numeroPedido;
+                
+                // Data atual formatada
+                const dataAtual = new Date();
+                document.getElementById('dataPedido').textContent = 
+                    dataAtual.toLocaleDateString('pt-BR') + ' às ' + 
+                    dataAtual.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                
+                // Método de pagamento
+                const metodo = dadosCompra.metodoPagamento || 'Cartão de Crédito';
+                let metodoFormatado = '';
+                
+                switch(metodo) {
+                    case 'pix':
+                        metodoFormatado = 'PIX';
+                        break;
+                    case 'cartao':
+                        metodoFormatado = 'Cartão de Crédito';
+                        break;
+                    case 'boleto':
+                        metodoFormatado = 'Boleto Bancário';
+                        break;
+                    case 'banco_digital':
+                        metodoFormatado = dadosCompra.bancoUtilizado || 'Banco Digital';
+                        break;
+                    default:
+                        metodoFormatado = metodo;
+                }
+                
+                document.getElementById('metodoPagamento').textContent = metodoFormatado;
+                
+                // Valor total
+                if (dadosCompra.valorTotal) {
+                    document.getElementById('valorTotal').textContent = `R$ ${dadosCompra.valorTotal.toFixed(2)}`;
+                }
+                
+                // Endereço de entrega
+                if (dadosCompra.enderecoEntrega) {
+                    const endereco = dadosCompra.enderecoEntrega;
+                    document.getElementById('enderecoEntrega').textContent = 
+                        `${endereco.logradouro}, ${endereco.bairro} - ${endereco.localidade}/${endereco.uf}`;
+                }
+                
+                // Produtos comprados
+                if (dadosCompra.produtos && dadosCompra.produtos.length > 0) {
+                    const container = document.getElementById('produtosComprados');
+                    const produtosHTML = dadosCompra.produtos.map(produto => `
+                        <div class="produto-item">
+                            <div class="produto-imagem">
+                                <img src="img/${produto.imagem}" alt="${produto.nome}" 
+                                     onerror="this.src='https://via.placeholder.com/50x50/333/fff?text=PROD'">
+                            </div>
+                            <div class="produto-info">
+                                <div class="produto-nome">${produto.nome}</div>
+                                <div class="produto-detalhes">
+                                    ${produto.descricao} • Qtd: ${produto.quantidade}
+                                </div>
+                            </div>
+                            <div class="produto-preco">
+                                R$ ${(produto.preco * produto.quantidade).toFixed(2)}
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    container.innerHTML += produtosHTML;
+                }
+                
+                // Limpar carrinho após confirmação
+                setTimeout(() => {
+                    localStorage.removeItem('carrinho_gymfit');
+                }, 1000);
+                
+            } else {
+                // Dados de fallback para demonstração
+                document.getElementById('numeroPedido').textContent = '#GYMFIT000001';
+                document.getElementById('dataPedido').textContent = new Date().toLocaleDateString('pt-BR');
+                document.getElementById('metodoPagamento').textContent = 'Cartão de Crédito';
+                document.getElementById('valorTotal').textContent = 'R$ 149,90';
+                document.getElementById('enderecoEntrega').textContent = 'Rua Exemplo, 123 - Centro - São Paulo/SP';
+                
+                // Produtos de exemplo
+                document.getElementById('produtosComprados').innerHTML += `
+                    <div class="produto-item">
+                        <div class="produto-imagem">
+                            <img src="https://via.placeholder.com/50x50/333/fff?text=WHEY" alt="Whey Protein">
+                        </div>
+                        <div class="produto-info">
+                            <div class="produto-nome">Whey Protein</div>
+                            <div class="produto-detalhes">1kg - Chocolate • Qtd: 1</div>
+                        </div>
+                        <div class="produto-preco">R$ 89,90</div>
+                    </div>
+                    <div class="produto-item">
+                        <div class="produto-imagem">
+                            <img src="https://via.placeholder.com/50x50/333/fff?text=CREAT" alt="Creatina">
+                        </div>
+                        <div class="produto-info">
+                            <div class="produto-nome">Creatina</div>
+                            <div class="produto-detalhes">250g - Pura • Qtd: 1</div>
+                        </div>
+                        <div class="produto-preco">R$ 59,90</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Função para rastrear pedido
+        function rastrearPedido() {
+            const numeroPedido = document.getElementById('numeroPedido').textContent;
+            alert(`🔍 Rastreamento do Pedido ${numeroPedido}\n\nSeu pedido está em processamento. Você receberá atualizações por e-mail e WhatsApp.\n\nPrevisão de entrega: 3-5 dias úteis`);
+        }
+
+        // Função para compartilhar compra
+        function compartilharCompra() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Minha compra na GYM FIT',
+                    text: 'Acabei de fazer uma compra incrível na GYM FIT!',
+                    url: window.location.href
+                });
+            } else {
+                alert('Compartilhe sua experiência nas redes sociais! 🎉');
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Criar confetti
+            criarConfetti();
+            
+            // Carregar dados
+            carregarDadosCompra();
+            
+            // Adicionar efeitos de interação
+            const botoes = document.querySelectorAll('.btn-acao');
+            botoes.forEach(botao => {
+                botao.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                
+                botao.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                });
+            });
+            
+            // Adicionar listener para o botão de compartilhar (se existir)
+            const btnCompartilhar = document.querySelector('.btn-compartilhar');
+            if (btnCompartilhar) {
+                btnCompartilhar.addEventListener('click', compartilharCompra);
+            }
+        });
+
+        // Prevenir zoom em inputs em iOS
+        document.addEventListener('touchstart', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                document.body.style.zoom = "100%";
+            }
+        }, { passive: true });
+    </script>
+</body>
+</html>

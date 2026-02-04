@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento Digital - GYM FIT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .cabecalho-pagamento {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 10px 0;
+        }
+        
+        .voltar-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            margin-right: 20px;
+            transition: color 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .voltar-btn:hover {
+            color: #8B0000;
+        }
+        
+        .titulo-pagamento {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            flex: 1;
+        }
+        
+        .info-pagamento {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .opcoes-digital {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .btn-digital {
+            background: #2a2a2a;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .btn-digital:hover, .btn-digital:active {
+            border-color: #8B0000;
+            transform: translateY(-2px);
+        }
+        
+        .icone-digital {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .google-pay {
+            background: #4285F4;
+            color: white;
+        }
+        
+        .apple-pay {
+            background: #000;
+            color: white;
+        }
+        
+        .info-digital {
+            flex: 1;
+            text-align: left;
+        }
+        
+        .nome-digital {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .desc-digital {
+            font-size: 14px;
+            color: #888;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .spinner {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #8B0000;
+        }
+        
+        .instrucoes {
+            color: #ccc;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 20px 0;
+        }
+        
+        .total-pagamento {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .label-total {
+            font-size: 16px;
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+        
+        .valor-total {
+            font-size: 28px;
+            font-weight: 700;
+            color: #8B0000;
+        }
+        
+        .botoes-pagamento {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn-pagamento {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-cancelar {
+            background: #333;
+            color: white;
+        }
+        
+        .btn-cancelar:hover, .btn-cancelar:active {
+            background: #444;
+        }
+
+        /* Responsividade para telas muito pequenas */
+        @media (max-width: 375px) {
+            body {
+                padding: 15px;
+            }
+            
+            .titulo-pagamento {
+                font-size: 20px;
+            }
+            
+            .btn-digital {
+                padding: 12px;
+            }
+            
+            .icone-digital {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cabecalho-pagamento">
+            <button class="voltar-btn" onclick="voltarParaOpcoes()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="titulo-pagamento">Pagamento Digital</h1>
+        </div>
+        
+        <div class="info-pagamento">
+            <div class="instrucoes">
+                <p><strong>Escolha seu método de pagamento digital</strong></p>
+                <p>Pagamento rápido e seguro com biometria</p>
+            </div>
+            
+            <div class="opcoes-digital">
+                <div class="btn-digital" onclick="selecionarGooglePay()">
+                    <div class="icone-digital google-pay">
+                        <i class="fab fa-google"></i>
+                    </div>
+                    <div class="info-digital">
+                        <div class="nome-digital">Google Pay</div>
+                        <div class="desc-digital">Pagamento com conta Google</div>
+                    </div>
+                </div>
+                
+                <div class="btn-digital" onclick="selecionarApplePay()">
+                    <div class="icone-digital apple-pay">
+                        <i class="fab fa-apple"></i>
+                    </div>
+                    <div class="info-digital">
+                        <div class="nome-digital">Apple Pay</div>
+                        <div class="desc-digital">Pagamento com Face ID/Touch ID</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <p id="loadingText">Conectando com Google Pay...</p>
+                <p style="font-size: 12px; color: #888;">Autenticando pagamento...</p>
+            </div>
+        </div>
+        
+        <div class="total-pagamento">
+            <div class="label-total">Total a pagar</div>
+            <div class="valor-total" id="valorTotal">R$ 0,00</div>
+        </div>
+        
+        <div class="botoes-pagamento">
+            <button class="btn-pagamento btn-cancelar" onclick="cancelarPagamento()">
+                Cancelar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Função única para carregar valor total (removida duplicação)
+        function carregarValorTotal() {
+    const dadosCompra = JSON.parse(localStorage.getItem('dados_compra_gymfit'));
+    
+    if (dadosCompra && dadosCompra.valorTotal) {
+        document.getElementById('valorTotal').textContent = `R$ ${dadosCompra.valorTotal.toFixed(2)}`;
+    } else {
+        // Fallback - calcular do carrinho
+        const carrinho = JSON.parse(localStorage.getItem('carrinho_gymfit')) || [];
+        const valorProdutos = carrinho.reduce((total, produto) => total + (produto.preco * produto.quantidade), 0);
+        const frete = 15.00;
+        const desconto = 0;
+        const valorTotal = valorProdutos + frete - desconto;
+        document.getElementById('valorTotal').textContent = `R$ ${valorTotal.toFixed(2)}`;
+    }
+}
+
+        function selecionarGooglePay() {
+            document.getElementById('loadingText').textContent = 'Conectando com Google Pay...';
+            document.getElementById('loading').style.display = 'block';
+            
+            setTimeout(() => {
+                window.location.href = 'confirmacao-pagamento.html';
+            }, 3000);
+        }
+
+        function selecionarApplePay() {
+            document.getElementById('loadingText').textContent = 'Conectando com Apple Pay...';
+            document.getElementById('loading').style.display = 'block';
+            
+            setTimeout(() => {
+                window.location.href = 'confirmacao-pagamento.html';
+            }, 3000);
+        }
+
+        function voltarParaOpcoes() {
+            window.location.href = 'opcoes-pagamento.html';
+        }
+
+        function cancelarPagamento() {
+            if (confirm('Deseja cancelar o pagamento?')) {
+                window.location.href = 'opcoes-pagamento.html';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', carregarValorTotal);
+    </script>
+</body>
+</html>
